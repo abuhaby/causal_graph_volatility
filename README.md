@@ -54,38 +54,118 @@ pip install -e .
 
 ```
 causal_graph_volatility/
-├── docs/
-│   ├── flowcharts/                      # Interactive HTML & workflow designs
-│   ├── reports/                         # Full quant diagnostic report
-│   └── specs/                           # Project specs, test infra & audit trails
-├── figures/
-│   ├── eda/                             # Exploratory data analysis (1 to 5)
-│   └── results/                         # Stage & backtest diagnostics (6 to 12)
-├── notebooks/
-│   ├── causal_volatility_framework.ipynb
-│   ├── causal_volatility_framework_60_20_20.ipynb
-│   ├── causal_volatility_framework_OOS.ipynb
-│   ├── causal_volatility_framework_WALKFORWARD.ipynb
-│   └── reference_logs/                  # Benchmark logs & baseline metrics
-├── scripts/
-│   ├── run_causal_volatility_analysis.py # End-to-end quantitative runner
-│   └── benchmarks/                      # Legacy benchmarks, unit & timing scripts
-├── src/
-│   └── causal_volatility/               # Modular quantitative library
-│       ├── data/                        # Market ingestion & realized volatility
-│       ├── econometrics/                # Stationarity, ARCH/GARCH & Granger causality
-│       ├── strategy/                    # Causal multiplier & trailing stop ratchet
-│       ├── visualization/               # Publication-grade plotting routines
-│       ├── cli.py                       # Command line interface
-│       └── pipeline.py                  # End-to-end pipeline orchestrator
-├── tests/                               # 4-tier test suite (100 tests)
-│   ├── fixtures/
-│   ├── tier1_unit/
-│   ├── tier2_integration/
-│   ├── tier3_regression/
-│   └── tier4_e2e/
-├── pyproject.toml
-└── README.md
+├── docs/                                    # Documentation, specifications & research reports
+│   ├── flowcharts/                          # Pipeline architecture & visual schematics
+│   │   └── project-design.html              # Standalone interactive flowchart & workflow design
+│   ├── reports/                             # Quantitative research & diagnostic audits
+│   │   └── quant_diagnostic_report.md       # Comprehensive econometric, stationarity & backtest report
+│   └── specs/                               # Engineering specifications & verification trails
+│       ├── ORIGINAL_REQUEST.md              # Original project requirements & scope contract
+│       ├── PROJECT.md                       # Architectural design & implementation roadmap
+│       ├── TEST_INFRA.md                    # 4-tier testing infrastructure documentation
+│       └── TEST_READY.md                    # Pre-flight checklist & test readiness sign-off
+│
+├── figures/                                 # Emitted publication-grade graphical outputs
+│   ├── eda/                                 # Exploratory Data Analysis (Stage 1-3)
+│   │   ├── eda_1_correlation_matrix.png     # Cross-asset correlation heatmap across differenced inputs
+│   │   ├── eda_2_return_distribution_qq.png # Empirical return distribution, excess kurtosis & normal Q-Q
+│   │   ├── eda_3_macro_overlay.png          # S&P 100 cumulative wealth vs VIX & Moody's Baa credit spreads
+│   │   ├── eda_4_volatility_estimators_comparison.png # Multi-estimator realized volatility benchmark
+│   │   └── eda_5_stationarity_transformation.png      # 4-panel ADF & KPSS stationarity verification
+│   └── results/                             # Stage Diagnostics & Backtest Results (Stage 4-8)
+│       ├── res_6_garch_conditional_vol_residuals.png  # AR-GARCH(1,1) volatility fit & innovation whitening
+│       ├── res_7_causal_dag_pathways.png              # Discovered Granger causal network & path coefficients
+│       ├── res_8_adaptive_multiplier_dynamics.png     # Dynamic adaptive multiplier (λ_t) & composite stress
+│       ├── res_9_is_equity_curve.png                  # In-Sample (TRAIN 2016–2020) strategy cumulative wealth
+│       ├── res_10_oos_equity_curve.png                # Out-of-Sample (TEST 2021–2026) cumulative equity curve
+│       ├── res_11_oos_drawdown.png                    # Out-of-Sample underwater drawdown curves
+│       └── res_12_regime_reentry_analysis.png         # Trailing stop ratchet state transitions & cash regimes
+│
+├── notebooks/                               # Research notebooks & legacy exploration
+│   ├── causal_volatility_framework.ipynb    # Monolithic research notebook baseline
+│   ├── causal_volatility_framework_60_20_20.ipynb # 60/20/20 train/validation/test split experiment
+│   ├── causal_volatility_framework_OOS.ipynb      # Out-of-sample partition analysis
+│   ├── causal_volatility_framework_WALKFORWARD.ipynb # Walk-forward rolling evaluation
+│   └── reference_logs/                      # Historical execution logs & validation baselines
+│       ├── causal_volatility_framework_OOS.txt      # Text transcript of legacy OOS run
+│       ├── causal_volatility_framework_OOS.txt.bak  # Legacy transcript backup
+│       └── output.log                       # Baseline numerical metrics log for regression tests
+│
+├── scripts/                                 # Pipeline execution & benchmark drivers
+│   ├── run_causal_volatility_analysis.py    # Master runner: data ingestion, econometrics, backtest & plots
+│   └── benchmarks/                          # Diagnostic micro-benchmarks & verification scripts
+│       ├── cell1.py                         # Single cell diagnostic runner
+│       ├── extract.py                       # Notebook extraction utility
+│       ├── fix_date_col.py                  # Datetime index parsing patch
+│       ├── fix_timeouts.py                  # Network timeout handler
+│       ├── run_all_timed.py                 # Benchmarking execution timer
+│       ├── run_garch_pq.py                  # GARCH(p,q) grid search benchmark
+│       ├── run_garch_t.py                   # Student's t GARCH evaluation script
+│       ├── run_sec1.py                      # Stage 1 execution driver
+│       ├── run_sec12.py                     # Stages 1–2 execution driver
+│       ├── run_sec123.py                    # Stages 1–3 execution driver
+│       ├── scratch.py                       # Ad-hoc experimental scratchpad
+│       ├── temp.py                          # Temporary execution buffer
+│       ├── temp_search.py                   # Parameter search scratch script
+│       ├── temp_source.py                   # Legacy source snapshot
+│       ├── test_garch_pq.py                 # Ad-hoc GARCH order test
+│       ├── test_garch_t.py                  # Ad-hoc Student's t test
+│       ├── test_perf.py                     # Performance timing harness
+│       ├── test_sec3.py                     # Ad-hoc stationarity test
+│       ├── test_yf.py                       # Yahoo Finance connectivity test
+│       ├── time_loop.py                     # Profiling execution timer
+│       ├── time_test.py                     # Step-by-step latency check
+│       └── verify_m1_adversarial.py         # M1 adversarial fixture verification
+│
+├── src/                                     # Core production Python package
+│   └── causal_volatility/                   # Package namespace
+│       ├── backtest/                        # Trailing stop ratchet & performance analytics
+│       │   ├── engine.py                    # Vectorized 1D ratchet state machine (calm/stormy regimes)
+│       │   ├── metrics.py                   # Annualized return, Sharpe ratio, MaxDD, and stop-out counts
+│       │   └── validation.py                # 5-fold walk-forward validation without lookahead leakage
+│       ├── causal/                          # Structural causal graph discovery & multiplier
+│       │   ├── discovery.py                 # Full-rank bivariate Granger causality testing (R2 fix)
+│       │   ├── multiplier.py                # Adaptive multiplier (λ_t ∈ [1.3, 2.0]) via rolling percentile
+│       │   └── pathways.py                  # Directed causal DAG network analysis & filtering
+│       ├── data/                            # Market data acquisition & alignment
+│       │   ├── fetcher.py                   # 3-tier fallback data loader (FRED JSON -> CSV -> Synthetic)
+│       │   ├── processor.py                 # Intraday feature alignment & liquidity proxy computation
+│       │   └── storage.py                   # Local fixture caching & offline serialization
+│       ├── estimators/                      # Intraday realized volatility estimators
+│       │   ├── base.py                      # BaseRealizedVolatilityEstimator abstract contract
+│       │   ├── close_to_close.py            # Standard deviation return variance benchmark
+│       │   ├── garman_klass.py              # Garman-Klass extreme-value estimator with zero-clipping
+│       │   ├── parkinson.py                 # Parkinson high-low range estimator
+│       │   ├── rogers_satchell.py           # Rogers-Satchell drift-independent estimator
+│       │   └── yang_zhang.py                # Yang-Zhang minimum-variance jump/drift estimator
+│       ├── models/                          # Volatility residualization engines
+│       │   ├── base.py                      # BaseVolatilityModel interface definition
+│       │   ├── egarch.py                    # Exponential GARCH (asymmetric leverage modeling)
+│       │   ├── factory.py                   # Dynamic model factory (garch, egarch, gjr, student_t)
+│       │   ├── garch.py                     # Standard AR-GARCH(1,1) Gaussian volatility filter
+│       │   ├── gjr_garch.py                 # Glosten-Jagannathan-Runkle GARCH
+│       │   └── selection.py                 # Autoregressive memory order lag selection (AIC/BIC)
+│       ├── stationarity/                    # Covariance stationarity validation
+│       │   ├── diagnostics.py               # Dual suite: Augmented Dickey-Fuller (ADF) + KPSS
+│       │   └── transform.py                 # ε-safe logarithmic & first-difference transformation
+│       ├── visualization/                   # Publication-grade plotting modules
+│       │   ├── eda.py                       # Seaborn/Matplotlib routines for EDA stages 1–5
+│       │   └── stage_diagnostics.py         # Diagnostic plots for stages 6–12 (equity, DAG, drawdown)
+│       ├── cli.py                           # Production Command-Line Interface (`causal-volatility`)
+│       ├── config.py                        # Centralized pipeline hyperparameters & defaults
+│       └── pipeline.py                      # Unified CausalVolatilityPipeline orchestrator
+│
+├── tests/                                   # Exhaustive 4-tier test suite (100 passing tests)
+│   ├── conftest.py                          # Shared pytest fixtures & test configuration
+│   ├── fixtures/                            # Deterministic air-gapped test datasets
+│   │   └── market_data_2016_2026.csv        # 10-year multi-asset market fixture
+│   ├── tier1_unit/                          # Tier 1: Mathematical invariants & analytical formulas
+│   ├── tier2_integration/                   # Tier 2: Component integration & contract validation
+│   ├── tier3_regression/                    # Tier 3: Numerical parity against historical logs
+│   └── tier4_e2e/                            # Tier 4: Full pipeline execution & CLI validation
+│
+├── pyproject.toml                           # PEP 517/518 build metadata, dependencies & CLI entrypoints
+└── README.md                                # Project overview, architecture & empirical results
 ```
 
 ## Quick Start & Reproducibility
