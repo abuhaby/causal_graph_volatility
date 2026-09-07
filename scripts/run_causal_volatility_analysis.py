@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Ensure src is in sys.path
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 SRC_DIR = PROJECT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -29,8 +29,10 @@ import causal_volatility as cv
 warnings.filterwarnings("ignore")
 np.random.seed(42)
 
-OUT_DIR = PROJECT_DIR
-os.makedirs(OUT_DIR, exist_ok=True)
+EDA_DIR = PROJECT_DIR / "figures" / "eda"
+RES_DIR = PROJECT_DIR / "figures" / "results"
+os.makedirs(EDA_DIR, exist_ok=True)
+os.makedirs(RES_DIR, exist_ok=True)
 
 print("=" * 85)
 print("🚀 CAUSAL GRAPH VOLATILITY FRAMEWORK: FULL PIPELINE & DIAGNOSTICS")
@@ -175,19 +177,19 @@ print("\n[Stage 8] Emitting All 12 Graphical Output Artifacts...")
 
 # EDA Plots (1 - 5)
 print("   👉 Generating eda_1_correlation_matrix.png...")
-cv.plot_correlation_matrix(stat_df, OUT_DIR / "eda_1_correlation_matrix.png")
+cv.plot_correlation_matrix(stat_df, EDA_DIR / "eda_1_correlation_matrix.png")
 
 print("   👉 Generating eda_2_return_distribution_qq.png...")
-cv.plot_return_and_vol_distributions(stat_df["SP100_Returns"], stat_df["GK_Vol_Diff"], OUT_DIR / "eda_2_return_distribution_qq.png")
+cv.plot_return_and_vol_distributions(stat_df["SP100_Returns"], stat_df["GK_Vol_Diff"], EDA_DIR / "eda_2_return_distribution_qq.png")
 
 print("   👉 Generating eda_3_macro_overlay.png...")
-cv.plot_macro_overlay(raw_df, OUT_DIR / "eda_3_macro_overlay.png")
+cv.plot_macro_overlay(raw_df, EDA_DIR / "eda_3_macro_overlay.png")
 
 print("   👉 Generating eda_4_volatility_estimators_comparison.png...")
-cv.plot_volatility_estimators_comparison(raw_df, OUT_DIR / "eda_4_volatility_estimators_comparison.png")
+cv.plot_volatility_estimators_comparison(raw_df, EDA_DIR / "eda_4_volatility_estimators_comparison.png")
 
 print("   👉 Generating eda_5_stationarity_transformation.png...")
-cv.plot_stationarity_transformation(proc_df, stat_df, OUT_DIR / "eda_5_stationarity_transformation.png")
+cv.plot_stationarity_transformation(proc_df, stat_df, EDA_DIR / "eda_5_stationarity_transformation.png")
 
 # Stage Diagnostic Plots (6 - 12)
 print("   👉 Generating res_6_garch_conditional_vol_residuals.png...")
@@ -195,29 +197,29 @@ cv.plot_garch_diagnostics(
     sigma_cond,
     proc_df.loc[sigma_cond.index, "Garman_Klass_Vol"],
     z_shocks,
-    OUT_DIR / "res_6_garch_conditional_vol_residuals.png",
+    RES_DIR / "res_6_garch_conditional_vol_residuals.png",
     lb_p=garch_diag["ljung_box_p"],
     arch_p=garch_diag["arch_lm_p"],
 )
 
 print("   👉 Generating res_7_causal_dag_pathways.png...")
-cv.plot_causal_dag_pathways(causal_outputs, OUT_DIR / "res_7_causal_dag_pathways.png")
+cv.plot_causal_dag_pathways(causal_outputs, RES_DIR / "res_7_causal_dag_pathways.png")
 
 print("   👉 Generating res_8_adaptive_multiplier_dynamics.png...")
 full_backtest = pd.concat([backtest_is, backtest_oos])
 composite_risk = (2.0 - multipliers) / 0.7
-cv.plot_adaptive_multiplier_dynamics(full_backtest, composite_risk, OUT_DIR / "res_8_adaptive_multiplier_dynamics.png")
+cv.plot_adaptive_multiplier_dynamics(full_backtest, composite_risk, RES_DIR / "res_8_adaptive_multiplier_dynamics.png")
 
 print("   👉 Generating res_9_is_equity_curve.png...")
-cv.plot_in_sample_equity_curve(backtest_is, OUT_DIR / "res_9_is_equity_curve.png")
+cv.plot_in_sample_equity_curve(backtest_is, RES_DIR / "res_9_is_equity_curve.png")
 
 print("   👉 Generating res_10_oos_equity_curve.png...")
-cv.plot_out_of_sample_equity_curve(backtest_oos, OUT_DIR / "res_10_oos_equity_curve.png")
+cv.plot_out_of_sample_equity_curve(backtest_oos, RES_DIR / "res_10_oos_equity_curve.png")
 
 print("   👉 Generating res_11_oos_drawdown.png...")
-cv.plot_out_of_sample_drawdown(backtest_oos, OUT_DIR / "res_11_oos_drawdown.png")
+cv.plot_out_of_sample_drawdown(backtest_oos, RES_DIR / "res_11_oos_drawdown.png")
 
 print("   👉 Generating res_12_regime_reentry_analysis.png...")
-cv.plot_regime_reentry_analysis(backtest_oos, OUT_DIR / "res_12_regime_reentry_analysis.png")
+cv.plot_regime_reentry_analysis(backtest_oos, RES_DIR / "res_12_regime_reentry_analysis.png")
 
 print("\n🎉 SUCCESS: All EDA plots and stage diagnostics successfully generated and saved!")

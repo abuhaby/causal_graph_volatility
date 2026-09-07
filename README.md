@@ -50,33 +50,76 @@ cd causal_graph_volatility
 pip install -e .
 ```
 
+## Repository Structure
+
+```
+causal_graph_volatility/
+├── docs/
+│   ├── flowcharts/                      # Interactive HTML & workflow designs
+│   ├── reports/                         # Full quant diagnostic report
+│   └── specs/                           # Project specs, test infra & audit trails
+├── figures/
+│   ├── eda/                             # Exploratory data analysis (1 to 5)
+│   └── results/                         # Stage & backtest diagnostics (6 to 12)
+├── notebooks/
+│   ├── causal_volatility_framework.ipynb
+│   ├── causal_volatility_framework_60_20_20.ipynb
+│   ├── causal_volatility_framework_OOS.ipynb
+│   ├── causal_volatility_framework_WALKFORWARD.ipynb
+│   └── reference_logs/                  # Benchmark logs & baseline metrics
+├── scripts/
+│   ├── run_causal_volatility_analysis.py # End-to-end quantitative runner
+│   └── benchmarks/                      # Legacy benchmarks, unit & timing scripts
+├── src/
+│   └── causal_volatility/               # Modular quantitative library
+│       ├── data/                        # Market ingestion & realized volatility
+│       ├── econometrics/                # Stationarity, ARCH/GARCH & Granger causality
+│       ├── strategy/                    # Causal multiplier & trailing stop ratchet
+│       ├── visualization/               # Publication-grade plotting routines
+│       ├── cli.py                       # Command line interface
+│       └── pipeline.py                  # End-to-end pipeline orchestrator
+├── tests/                               # 4-tier test suite (100 tests)
+│   ├── fixtures/
+│   ├── tier1_unit/
+│   ├── tier2_integration/
+│   ├── tier3_regression/
+│   └── tier4_e2e/
+├── pyproject.toml
+└── README.md
+```
+
 ## Quick Start & Reproducibility
 
 Execute the full quantitative pipeline and generate all 12 publication-grade EDA and stage diagnostic figures:
 
 ```bash
-python run_causal_volatility_analysis.py
+# Run complete end-to-end analysis & figure generation
+python scripts/run_causal_volatility_analysis.py
+
+# Or via installed CLI entrypoint
+causal-volatility --model garch --split oos --offline
 ```
 
 ### Generated Diagnostics & Reports
 
-* **Full Quantitative Report**: [`quant_diagnostic_report.md`](quant_diagnostic_report.md)
-* **EDA Graphics (Stage 1-3)**:
-  * `eda_1_correlation_matrix.png`: Cross-asset correlation heatmap across differenced stationary inputs.
-  * `eda_2_return_distribution_qq.png`: Asset return distribution, excess kurtosis, and normal Q-Q plot.
-  * `eda_3_macro_overlay.png`: S&P 100 cumulative wealth overlay against VIX and Moody's Baa credit spreads.
-  * `eda_4_volatility_estimators_comparison.png`: Multi-estimator realized volatility comparison (Garman-Klass, Parkinson, Rogers-Satchell, Close-to-Close).
-  * `eda_5_stationarity_transformation.png`: 4-panel ADF/KPSS stationarity transformation verification.
-* **Stage Diagnostics & Backtest Results (Stage 4-8)**:
-  * `res_6_garch_conditional_vol_residuals.png`: AR-GARCH(1,1) conditional volatility fit and standardized innovation white-noise audits.
-  * `res_7_causal_dag_pathways.png`: Discovered Granger causal path coefficients and directed network topology.
-  * `res_8_adaptive_multiplier_dynamics.png`: Dynamic adaptive multiplier ($\lambda_t$) contraction and composite stress tracking.
-  * `res_9_is_equity_curve.png`: In-Sample (TRAIN 2016–2020) strategy cumulative wealth vs baseline and Buy & Hold.
-  * `res_10_oos_equity_curve.png`: Out-of-Sample (TEST 2021–2026) strategy cumulative equity curve.
-  * `res_11_oos_drawdown.png`: Out-of-Sample underwater drawdown curves showing maximum drawdown containment.
-  * `res_12_regime_reentry_analysis.png`: Trailing stop ratchet execution, cash preservation intervals, and re-entry events.
+* **Full Quantitative Report**: [`docs/reports/quant_diagnostic_report.md`](docs/reports/quant_diagnostic_report.md)
+* **EDA Graphics (Stage 1-3)** (`figures/eda/`):
+  * [`figures/eda/eda_1_correlation_matrix.png`](figures/eda/eda_1_correlation_matrix.png): Cross-asset correlation heatmap across differenced stationary inputs.
+  * [`figures/eda/eda_2_return_distribution_qq.png`](figures/eda/eda_2_return_distribution_qq.png): Asset return distribution, excess kurtosis, and normal Q-Q plot.
+  * [`figures/eda/eda_3_macro_overlay.png`](figures/eda/eda_3_macro_overlay.png): S&P 100 cumulative wealth overlay against VIX and Moody's Baa credit spreads.
+  * [`figures/eda/eda_4_volatility_estimators_comparison.png`](figures/eda/eda_4_volatility_estimators_comparison.png): Multi-estimator realized volatility comparison (Garman-Klass, Parkinson, Rogers-Satchell, Close-to-Close).
+  * [`figures/eda/eda_5_stationarity_transformation.png`](figures/eda/eda_5_stationarity_transformation.png): 4-panel ADF/KPSS stationarity transformation verification.
+* **Stage Diagnostics & Backtest Results (Stage 4-8)** (`figures/results/`):
+  * [`figures/results/res_6_garch_conditional_vol_residuals.png`](figures/results/res_6_garch_conditional_vol_residuals.png): AR-GARCH(1,1) conditional volatility fit and standardized innovation white-noise audits.
+  * [`figures/results/res_7_causal_dag_pathways.png`](figures/results/res_7_causal_dag_pathways.png): Discovered Granger causal path coefficients and directed network topology.
+  * [`figures/results/res_8_adaptive_multiplier_dynamics.png`](figures/results/res_8_adaptive_multiplier_dynamics.png): Dynamic adaptive multiplier ($\lambda_t$) contraction and composite stress tracking.
+  * [`figures/results/res_9_is_equity_curve.png`](figures/results/res_9_is_equity_curve.png): In-Sample (TRAIN 2016–2020) strategy cumulative wealth vs baseline and Buy & Hold.
+  * [`figures/results/res_10_oos_equity_curve.png`](figures/results/res_10_oos_equity_curve.png): Out-of-Sample (TEST 2021–2026) strategy cumulative equity curve.
+  * [`figures/results/res_11_oos_drawdown.png`](figures/results/res_11_oos_drawdown.png): Out-of-Sample underwater drawdown curves showing maximum drawdown containment.
+  * [`figures/results/res_12_regime_reentry_analysis.png`](figures/results/res_12_regime_reentry_analysis.png): Trailing stop ratchet execution, cash preservation intervals, and re-entry events.
 
 ## License
 
 MIT License.
+
 

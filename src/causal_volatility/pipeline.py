@@ -169,26 +169,31 @@ class CausalVolatilityPipeline:
         out = self.output_dir
         print(f"📊 Generating publication-grade graphical outputs in {out}...")
 
+        eda_dir = out / "eda" if (out / "eda").exists() or out.name == "figures" else out
+        res_dir = out / "results" if (out / "results").exists() or out.name == "figures" else out
+        eda_dir.mkdir(parents=True, exist_ok=True)
+        res_dir.mkdir(parents=True, exist_ok=True)
+
         # EDA Plots (1 to 5)
-        plot_correlation_matrix(stat_df, out / "eda_1_correlation_matrix.png")
-        plot_return_and_vol_distributions(stat_df["SP100_Returns"], stat_df["GK_Vol_Diff"], out / "eda_2_return_distribution_qq.png")
-        plot_macro_overlay(df_raw, out / "eda_3_macro_overlay.png")
-        plot_volatility_estimators_comparison(df_raw, out / "eda_4_volatility_estimators_comparison.png")
-        plot_stationarity_transformation(proc_df, stat_df, out / "eda_5_stationarity_transformation.png")
+        plot_correlation_matrix(stat_df, eda_dir / "eda_1_correlation_matrix.png")
+        plot_return_and_vol_distributions(stat_df["SP100_Returns"], stat_df["GK_Vol_Diff"], eda_dir / "eda_2_return_distribution_qq.png")
+        plot_macro_overlay(df_raw, eda_dir / "eda_3_macro_overlay.png")
+        plot_volatility_estimators_comparison(df_raw, eda_dir / "eda_4_volatility_estimators_comparison.png")
+        plot_stationarity_transformation(proc_df, stat_df, eda_dir / "eda_5_stationarity_transformation.png")
 
         # Stage & Results Diagnostics Plots (6 to 12)
         lb_p = diagnostics.get("ljung_box_p", 0.85)
         arch_p = diagnostics.get("arch_lm_p", 0.92)
-        plot_garch_diagnostics(sigma, proc_df.loc[sigma.index, "Garman_Klass_Vol"], z, out / "res_6_garch_conditional_vol_residuals.png", lb_p, arch_p)
-        plot_causal_dag_pathways(causal_outputs, out / "res_7_causal_dag_pathways.png")
+        plot_garch_diagnostics(sigma, proc_df.loc[sigma.index, "Garman_Klass_Vol"], z, res_dir / "res_6_garch_conditional_vol_residuals.png", lb_p, arch_p)
+        plot_causal_dag_pathways(causal_outputs, res_dir / "res_7_causal_dag_pathways.png")
 
         # Composite risk for multiplier plot
         composite_risk = (2.0 - multipliers_series) / 0.7
         full_backtest = pd.concat([backtest_is, backtest_oos])
-        plot_adaptive_multiplier_dynamics(full_backtest, composite_risk, out / "res_8_adaptive_multiplier_dynamics.png")
+        plot_adaptive_multiplier_dynamics(full_backtest, composite_risk, res_dir / "res_8_adaptive_multiplier_dynamics.png")
 
-        plot_in_sample_equity_curve(backtest_is, out / "res_9_is_equity_curve.png")
-        plot_out_of_sample_equity_curve(backtest_oos, out / "res_10_oos_equity_curve.png")
-        plot_out_of_sample_drawdown(backtest_oos, out / "res_11_oos_drawdown.png")
-        plot_regime_reentry_analysis(backtest_oos, out / "res_12_regime_reentry_analysis.png")
+        plot_in_sample_equity_curve(backtest_is, res_dir / "res_9_is_equity_curve.png")
+        plot_out_of_sample_equity_curve(backtest_oos, res_dir / "res_10_oos_equity_curve.png")
+        plot_out_of_sample_drawdown(backtest_oos, res_dir / "res_11_oos_drawdown.png")
+        plot_regime_reentry_analysis(backtest_oos, res_dir / "res_12_regime_reentry_analysis.png")
         print("✅ All 12 graphical outputs successfully emitted.")
