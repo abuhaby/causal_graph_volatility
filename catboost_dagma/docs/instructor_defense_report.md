@@ -1,7 +1,7 @@
 # Capstone Instructor Defense Report: Version 2 Architecture & Empirical Findings
 
 **Project Title:** Non-Linear Causal Topology Tracking with Student-t DAGMA & Gradient Boosted Volatility Forecasting  
-**Author:** Capstone Candidate  
+**Author:** MSc Capstone Group (2025 Cohort)  
 **Date:** September 2026  
 **Status:** Advanced Version-2 Implementation (`catboost_dagma`)  
 

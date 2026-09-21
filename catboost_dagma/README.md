@@ -35,37 +35,14 @@ This sub-repository (`catboost_dagma/`) operationalizes the feedback provided on
 
 ---
 
-## 10-Stage Pipeline Architecture
+## 10-Stage Pipeline Architecture & Interactive Flowchart
 
-```
-                                [Stage 1: Multi-Source Ingestion]
-                                                │
-                                                ▼
-                         [Stage 2: Fama-French 3-Factor Residualization]
-                                                │
-                     ┌──────────────────────────┴──────────────────────────┐
-                     ▼                                                     ▼
-    [Stage 3: Graphical LASSO Precision Matrix]          [Stage 4: Student-t DAGMA-DYNOTEARS]
-                     │                                                     │
-                     └──────────────────────────┬──────────────────────────┘
-                                                ▼
-                         [Stage 5: Topological Centrality Extraction]
-                                                │
-                                                ▼
-                         [Stage 6: Orthogonality & VIF Collinearity Audit]
-                                                │
-                                                ▼
-                         [Stage 7: Frobenius Causal Drift (ΔW) & Breaks]
-                                                │
-                                                ▼
-                         [Stage 8: CatBoost GPU Ablation & Importances]
-                                                │
-                                                ▼
-                         [Stage 9: Causal Contagion-Pruning Backtest]
-                                                │
-                                                ▼
-                         [Stage 10: Publication Diagnostic Figures]
-```
+> 🔗 **Interactive Flowchart Micro-App:** Open [`Flowcharts/catboost_dagma_architecture.html`](../Flowcharts/catboost_dagma_architecture.html) in your browser for the full interactive canvas featuring dynamic orthogonal routing, pan/zoom, dark/light mode toggle, marching-ants data flow animations, and KaTeX mathematical equation tooltips.
+>
+> 📐 **Vector SVG Asset:** Available at [`catboost_dagma/figures/v2_architecture_flowchart.svg`](figures/v2_architecture_flowchart.svg).
+
+![Version 2 Architecture Flowchart](figures/v2_architecture_flowchart.svg)
+
 
 1. **Stage 1: Multi-Source Ingestion**: Loads S&P 100 constituent panels across 6 GICS sectors alongside Fama-French 3-factor series.
 2. **Stage 2: Factor Residualization**: Vectorized OLS residualization producing idiosyncratic return panel $\boldsymbol{\epsilon}_t$.

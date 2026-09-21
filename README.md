@@ -85,6 +85,10 @@ causal_graph_volatility/
 │   └── visualization/                       # Publication plotting suite
 │       └── diagnostics.py                   # Matplotlib/Seaborn publication figure generators
 │
+├── Flowcharts/                              # Publication-Grade Interactive Micro-Apps & Flowcharts
+│   ├── catboost_dagma_architecture.html     # Version 2 interactive flowchart micro-app (pan/zoom & KaTeX)
+│   └── catboost_dagma_architecture.svg      # Standalone publication-grade vector SVG flowchart
+│
 ├── docs/                                    # Documentation, specifications & research reports
 │   ├── flowcharts/                          # Pipeline architecture & visual schematics
 │   │   └── project-design.html              # Standalone interactive flowchart & workflow design
@@ -243,6 +247,9 @@ To address the **Capstone Project Instructor Feedback**, we engineered **Version
 
 * **Interactive Notebook & Publication Figures**:
   The complete pipeline is available in [`catboost_dagma/notebooks/v2_catboost_dagma_pipeline.ipynb`](catboost_dagma/notebooks/v2_catboost_dagma_pipeline.ipynb), complete with pre-executed outputs and 5 publication figures in `catboost_dagma/figures/`.
+* **Publication-Grade Flowchart Micro-App**:
+  A standalone interactive flowchart application is available at [`Flowcharts/catboost_dagma_architecture.html`](Flowcharts/catboost_dagma_architecture.html), featuring dynamic orthogonal routing, pan/zoom controls, dark/light theme switching, animated data flow, and KaTeX mathematical tooltips. The publication vector asset is preserved at [`catboost_dagma/figures/v2_architecture_flowchart.svg`](catboost_dagma/figures/v2_architecture_flowchart.svg).
+
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Directory:** `/Documents/causal_graph_volatility/catboost_dagma`  
 **Framework Version:** 2.0.0  
-**Authors:** DeepMind / Antigravity Quant Team  
+**Authors:** MSc Capstone Group (2025 Cohort)  
 
 ---
 
