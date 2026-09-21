@@ -303,6 +303,7 @@ def plot_adaptive_multiplier_dynamics(
 def plot_in_sample_equity_curve(
     backtest_is: pd.DataFrame,
     out_path: Union[str, Path],
+    static_multiplier: float = 3.15,
 ):
     """
     Stage 7 Diagnostics: In-Sample (TRAIN 2016-2020) Strategy Equity Curve.
@@ -331,7 +332,7 @@ def plot_in_sample_equity_curve(
     dates = backtest_is.index
 
     ax.plot(dates, bh_wealth, label="Buy & Hold Benchmark", color="#7f7f7f", linewidth=1.2, linestyle="--")
-    ax.plot(dates, std_wealth, label="Static Baseline Ratchet (λ = 2.0)", color="#d62728", linewidth=1.5, alpha=0.85)
+    ax.plot(dates, std_wealth, label=f"Static Baseline Ratchet (λ = {static_multiplier:.2f})", color="#d62728", linewidth=1.5, alpha=0.85)
     ax.plot(dates, causal_wealth, label="Causal Adaptive Ratchet Strategy", color="#2ca02c", linewidth=2.0)
 
     ax.set_title("In-Sample (TRAIN: 2016–2020) Strategy Equity Curve Performance", fontsize=13, fontweight="bold", pad=12)
@@ -347,6 +348,7 @@ def plot_in_sample_equity_curve(
 def plot_out_of_sample_equity_curve(
     backtest_oos: pd.DataFrame,
     out_path: Union[str, Path],
+    static_multiplier: float = 3.15,
 ):
     """
     Stage 8 Diagnostics: Out-of-Sample (TEST 2021-2026) Strategy Equity Curve.
@@ -374,7 +376,7 @@ def plot_out_of_sample_equity_curve(
     dates = backtest_oos.index
 
     ax.plot(dates, bh_wealth, label="Buy & Hold Benchmark (OOS)", color="#7f7f7f", linewidth=1.2, linestyle="--")
-    ax.plot(dates, std_wealth, label="Static Baseline Ratchet (λ = 2.0)", color="#d62728", linewidth=1.5, alpha=0.85)
+    ax.plot(dates, std_wealth, label=f"Static Baseline Ratchet (λ = {static_multiplier:.2f})", color="#d62728", linewidth=1.5, alpha=0.85)
     ax.plot(dates, causal_wealth, label="Causal Adaptive Ratchet Strategy (OOS)", color="#2ca02c", linewidth=2.0)
 
     ax.set_title("True Out-of-Sample (TEST: 2021–2026) Strategy Equity Curve Performance", fontsize=13, fontweight="bold", pad=12)

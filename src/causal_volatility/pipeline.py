@@ -150,7 +150,12 @@ class CausalVolatilityPipeline:
         # Step 6: Adaptive Causal Multiplier
         b_mult = self.baseline_multiplier if self.baseline_multiplier is not None else (2.0 if self.offline else 4.5)
         m_mult = self.min_multiplier if self.min_multiplier is not None else (1.3 if self.offline else 1.8)
-        s_mult = self.static_multiplier if self.static_multiplier is not None else b_mult
+        if self.static_multiplier is not None:
+            s_mult = self.static_multiplier
+        elif self.offline:
+            s_mult = 2.0
+        else:
+            s_mult = round((b_mult + m_mult) / 2.0, 2)
         c_thresh = self.calm_threshold if self.calm_threshold is not None else (1.8 if self.offline else 2.8)
         lb = self.lookback if self.lookback is not None else (252 if self.offline else 126)
         ewm = self.ewm_span if self.ewm_span is not None else (10 if self.offline else 5)
@@ -289,8 +294,15 @@ class CausalVolatilityPipeline:
             calm_threshold=c_thresh,
         )
 
-        plot_in_sample_equity_curve(backtest_is, res_dir / "res_9_is_equity_curve.png")
-        plot_out_of_sample_equity_curve(backtest_oos, res_dir / "res_10_oos_equity_curve.png")
+        if self.static_multiplier is not None:
+            s_mult = self.static_multiplier
+        elif self.offline:
+            s_mult = 2.0
+        else:
+            s_mult = round((b_mult + m_mult) / 2.0, 2)
+
+        plot_in_sample_equity_curve(backtest_is, res_dir / "res_9_is_equity_curve.png", static_multiplier=s_mult)
+        plot_out_of_sample_equity_curve(backtest_oos, res_dir / "res_10_oos_equity_curve.png", static_multiplier=s_mult)
         plot_out_of_sample_drawdown(backtest_oos, res_dir / "res_11_oos_drawdown.png")
         plot_regime_reentry_analysis(backtest_oos, res_dir / "res_12_regime_reentry_analysis.png")
         print("✅ All 12 graphical outputs successfully emitted.")

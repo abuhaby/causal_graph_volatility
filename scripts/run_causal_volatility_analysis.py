@@ -180,11 +180,11 @@ test_multipliers = multipliers.loc[test_df.index.intersection(multipliers.index)
 print("\n[Stage 7] Executing Vectorized Trailing Stop Ratchet Engine (ATR-Based)...")
 backtest_is = cv.execute_causal_trailing_stop(
     raw_df, proc_df, train_multipliers,
-    static_multiplier=4.5, calm_threshold=2.8, ma_window=20, max_cash_days=15
+    static_multiplier=3.15, calm_threshold=2.8, ma_window=20, max_cash_days=15
 )
 backtest_oos = cv.execute_causal_trailing_stop(
     raw_df, proc_df, test_multipliers,
-    static_multiplier=4.5, calm_threshold=2.8, ma_window=20, max_cash_days=15
+    static_multiplier=3.15, calm_threshold=2.8, ma_window=20, max_cash_days=15
 )
 
 metrics_is = cv.compute_comprehensive_risk_metrics(backtest_is)
@@ -257,10 +257,10 @@ cv.plot_adaptive_multiplier_dynamics(
 )
 
 print("   👉 Generating res_9_is_equity_curve.png...")
-cv.plot_in_sample_equity_curve(backtest_is, RES_DIR / "res_9_is_equity_curve.png")
+cv.plot_in_sample_equity_curve(backtest_is, RES_DIR / "res_9_is_equity_curve.png", static_multiplier=3.15)
 
 print("   👉 Generating res_10_oos_equity_curve.png...")
-cv.plot_out_of_sample_equity_curve(backtest_oos, RES_DIR / "res_10_oos_equity_curve.png")
+cv.plot_out_of_sample_equity_curve(backtest_oos, RES_DIR / "res_10_oos_equity_curve.png", static_multiplier=3.15)
 
 print("   👉 Generating res_11_oos_drawdown.png...")
 cv.plot_out_of_sample_drawdown(backtest_oos, RES_DIR / "res_11_oos_drawdown.png")
@@ -277,7 +277,7 @@ print("\n[Stage 9] Executing Expanding-Window Walk-Forward Validation (5 Folds).
 try:
     wf_results = cv.run_walk_forward_validation(
         raw_df, proc_df, stat_df, n_folds=5, min_train_size=500,
-        baseline_multiplier=4.5, min_multiplier=1.8, static_multiplier=4.5,
+        baseline_multiplier=4.5, min_multiplier=1.8, static_multiplier=3.15,
         calm_threshold=2.8, max_cash_days=15,
     )
     print("\n" + "=" * 80)

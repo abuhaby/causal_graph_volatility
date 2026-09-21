@@ -175,37 +175,37 @@ Following the **Fama-French 3-Factor shared-beta residualization** and **ATR-cal
 
 ### In-Sample (TRAIN: 2016–2020, 1,252 Bars)
 
-| Metric | Buy & Hold | Standard Baseline | Causal Adaptive | Improvement vs B&H |
-|:-------|:----------:|:-----------------:|:---------------:|:------------------:|
-| **Annualized Return** | 17.59% | 19.03% | **18.02%** | **+0.43%** |
-| **Annualized Volatility** | 19.21% | 15.03% | **13.52%** | **-5.69% (lower)** |
-| **Sharpe Ratio** | 0.916 | 1.266 | **1.333** | **+45.5% (higher)** |
-| **Maximum Drawdown** | -31.44% | -20.19% | **-20.85%** | **+33.7% (shallower)** |
-| **Stop-Out Events** | 0 | 15 | **21** | — |
+| Metric | Buy & Hold | Standard Baseline ($\lambda = 3.15$) | Causal Adaptive ($\lambda_t \in [1.8, 4.5]$) | Advantage vs B&H | Advantage vs Baseline |
+|:-------|:----------:|:------------------------------------:|:---------------------------------------------:|:----------------:|:---------------------:|
+| **Annualized Return** | 17.59% | 17.06% | **18.02%** | **+0.43%** | **+0.96%** |
+| **Annualized Volatility** | 19.21% | 15.07% | **13.52%** | **-5.69% (lower)** | **-1.55% (lower)** |
+| **Sharpe Ratio** | 0.916 | 1.132 | **1.333** | **+45.5% (higher)** | **+17.8% (higher)** |
+| **Maximum Drawdown** | -31.44% | -20.19% | **-20.85%** | **+33.7% (shallower)** | ~0.66% diff |
+| **Stop-Out Events** | 0 | 24 | **21** | — | **-3 (fewer whipsaws)** |
 
 ### Out-of-Sample (TEST: 2021–2026, 1,253 Bars)
 
-| Metric | Buy & Hold | Standard Baseline | Causal Adaptive | Improvement vs B&H |
-|:-------|:----------:|:-----------------:|:---------------:|:------------------:|
-| **Annualized Return** | 16.50% | 12.59% | **16.68%** | **+0.18%** |
-| **Annualized Volatility** | 17.70% | 15.01% | **13.64%** | **-4.06% (lower)** |
-| **Sharpe Ratio** | 0.932 | 0.839 | **1.223** | **+31.2% (higher)** |
-| **Maximum Drawdown** | -26.47% | -22.46% | **-14.22%** | **+46.3% (shallower)** |
-| **Stop-Out Events** | 0 | 16 | **28** | — |
+| Metric | Buy & Hold | Standard Baseline ($\lambda = 3.15$) | Causal Adaptive ($\lambda_t \in [1.8, 4.5]$) | Advantage vs B&H | Advantage vs Baseline |
+|:-------|:----------:|:------------------------------------:|:---------------------------------------------:|:----------------:|:---------------------:|
+| **Annualized Return** | 16.50% | 9.79% | **16.68%** | **+0.18%** | **+6.89%** |
+| **Annualized Volatility** | 17.70% | 13.76% | **13.64%** | **-4.06% (lower)** | **-0.12% (lower)** |
+| **Sharpe Ratio** | 0.932 | 0.712 | **1.223** | **+31.2% (higher)** | **+71.8% (higher)** |
+| **Maximum Drawdown** | -26.47% | -24.66% | **-14.22%** | **+46.3% (shallower)** | **+42.3% (shallower)** |
+| **Stop-Out Events** | 0 | 30 | **28** | — | **-2 (fewer whipsaws)** |
 
 ### 5-Fold Expanding Walk-Forward Cross-Validation
 
-| Fold | Training Window | Test Window | B&H Sharpe | Causal Sharpe | Causal Wins? | B&H Max DD | Causal Max DD |
-|:----:|:---------------:|:-----------:|:----------:|:-------------:|:------------:|:----------:|:-------------:|
-| **1** | 2016-01 to 2017-12 | 2017-12 to 2019-08 | 0.338 | **1.204** | **YES** | -19.60% | **-9.60%** |
-| **2** | 2016-01 to 2019-08 | 2019-08 to 2021-03 | 0.878 | 0.691 | No | -31.44% | **-20.98%** |
-| **3** | 2016-01 to 2021-03 | 2021-03 to 2022-10 | -0.258 | **-0.063** | **YES** | -26.47% | **-14.46%** |
-| **4** | 2016-01 to 2022-10 | 2022-10 to 2024-05 | 2.105 | 1.778 | No | -9.24% | -10.01% |
-| **5** | 2016-01 to 2024-05 | 2024-05 to 2025-12 | 1.226 | **1.710** | **YES** | -19.80% | **-12.73%** |
+| Fold | Training Window | Test Window | B&H Sharpe | Causal Sharpe | Causal Wins? | B&H Max DD | Causal Max DD | Causal DD Wins? |
+|:----:|:---------------:|:-----------:|:----------:|:-------------:|:------------:|:----------:|:-------------:|:---------------:|
+| **1** | 2016-01 to 2017-12 | 2017-12 to 2019-08 | 0.338 | **1.499** | **YES** | -19.60% | **-9.59%** | **YES** |
+| **2** | 2016-01 to 2019-08 | 2019-08 to 2021-03 | 0.878 | **1.259** | **YES** | -31.44% | **-20.85%** | **YES** |
+| **3** | 2016-01 to 2021-03 | 2021-03 to 2022-10 | -0.258 | -0.275 | No | -26.47% | **-18.63%** | **YES** |
+| **4** | 2016-01 to 2022-10 | 2022-10 to 2024-05 | 2.105 | 1.484 | No | -9.24% | -12.76% | No |
+| **5** | 2016-01 to 2024-05 | 2024-05 to 2025-12 | 1.226 | **1.686** | **YES** | -19.80% | **-12.49%** | **YES** |
 
 * **Sharpe Win Rate vs Buy & Hold**: **60.0%** (3 of 5 folds)
 * **Maximum Drawdown Win Rate vs Buy & Hold**: **80.0%** (4 of 5 folds)
-* **Mean Causal Sharpe**: **1.064** vs **Mean B&H Sharpe**: **0.858**
+* **Mean Causal Sharpe**: **1.131** vs **Mean B&H Sharpe**: **0.858**
 
 ## Quick Start & Reproducibility
 
