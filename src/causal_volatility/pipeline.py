@@ -20,22 +20,25 @@ from causal_volatility.estimators.garman_klass import GarmanKlassEstimator
 from causal_volatility.models.factory import get_volatility_model
 from causal_volatility.models.selection import OptimalLagSelector
 from causal_volatility.stationarity.transform import StationarityTransformer
-from causal_volatility.visualization.eda import (
-    plot_correlation_matrix,
-    plot_macro_overlay,
-    plot_return_and_vol_distributions,
-    plot_stationarity_transformation,
-    plot_volatility_estimators_comparison,
-)
-from causal_volatility.visualization.stage_diagnostics import (
-    plot_adaptive_multiplier_dynamics,
-    plot_causal_dag_pathways,
-    plot_garch_diagnostics,
-    plot_in_sample_equity_curve,
-    plot_out_of_sample_drawdown,
-    plot_out_of_sample_equity_curve,
-    plot_regime_reentry_analysis,
-)
+try:
+    from causal_volatility.visualization.eda import (
+        plot_correlation_matrix,
+        plot_macro_overlay,
+        plot_return_and_vol_distributions,
+        plot_stationarity_transformation,
+        plot_volatility_estimators_comparison,
+    )
+    from causal_volatility.visualization.stage_diagnostics import (
+        plot_adaptive_multiplier_dynamics,
+        plot_causal_dag_pathways,
+        plot_garch_diagnostics,
+        plot_in_sample_equity_curve,
+        plot_out_of_sample_drawdown,
+        plot_out_of_sample_equity_curve,
+        plot_regime_reentry_analysis,
+    )
+except ImportError:
+    pass
 
 
 class CausalVolatilityPipeline:
@@ -48,12 +51,28 @@ class CausalVolatilityPipeline:
         start_date: str = "2016-01-01",
         end_date: str = "2026-01-01",
         output_dir: Optional[Union[str, Path]] = None,
+        baseline_multiplier: Optional[float] = None,
+        min_multiplier: Optional[float] = None,
+        static_multiplier: Optional[float] = None,
+        calm_threshold: Optional[float] = None,
+        ma_window: int = 20,
+        max_cash_days: Optional[int] = None,
+        lookback: Optional[int] = None,
+        ewm_span: Optional[int] = None,
     ):
         self.model_type = model
         self.offline = offline
         self.start_date = start_date
         self.end_date = end_date
         self.output_dir = Path(output_dir) if output_dir else None
+        self.baseline_multiplier = baseline_multiplier
+        self.min_multiplier = min_multiplier
+        self.static_multiplier = static_multiplier
+        self.calm_threshold = calm_threshold
+        self.ma_window = ma_window
+        self.max_cash_days = max_cash_days
+        self.lookback = lookback
+        self.ewm_span = ewm_span
 
     def run(self, df_raw: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
         """Execute full quantitative pipeline."""
@@ -87,32 +106,38 @@ class CausalVolatilityPipeline:
         # Step 5: Causal Discovery DAG (TRAIN / TEST 50/50 Split)
         causal_df = pd.DataFrame(index=z.index)
         
-        # Fama-French Residualization of Returns (Instructor Feedback)
+        # Fama-French Residualization of ALL Causal Series (Instructor Feedback)
+        # "Residualize returns on Fama-French factors before learning the graph.
+        # The edges that survive that are the interesting ones."
         if "Mkt-RF" in stat_df.columns:
             import statsmodels.api as sm
-            # Align indices and dropna for regression
-            reg_df = stat_df[["SP100_Returns", "Mkt-RF", "SMB", "HML", "RF"]].loc[z.index].dropna()
+            ff_cols = ["Mkt-RF", "SMB", "HML"]
             
-            # Predict excess return using Fama-French 3-factor model
-            y = reg_df["SP100_Returns"] - reg_df["RF"]
-            X = reg_df[["Mkt-RF", "SMB", "HML"]]
-            X = sm.add_constant(X)
+            # Residualize each causal input variable to remove shared market beta
+            for col_name, stat_col in [
+                ("Resid_Returns", "SP100_Returns"),
+                ("Resid_VIX_Diff", "VIX_Diff"),
+                ("Resid_Credit_Spread_Diff", "Credit_Spread_Diff"),
+                ("Resid_Liquidity_Diff", "Liquidity_Diff"),
+            ]:
+                reg_df = stat_df[[stat_col] + ff_cols].loc[z.index].dropna()
+                if "RF" in stat_df.columns and stat_col == "SP100_Returns":
+                    y = reg_df[stat_col] - stat_df.loc[reg_df.index, "RF"]
+                else:
+                    y = reg_df[stat_col]
+                X = sm.add_constant(reg_df[ff_cols])
+                resid = sm.OLS(y, X).fit().resid
+                causal_df[col_name] = resid.reindex(z.index)
             
-            # Fit OLS and extract residuals (shared beta eliminated)
-            model = sm.OLS(y, X).fit()
-            resid = model.resid
-            
-            # Reindex to causal_df and name as Resid_Returns
-            causal_df["Resid_Returns"] = resid.reindex(z.index)
-            print("INFO: Fama-French residualization applied to Returns successfully.")
+            print("INFO: Fama-French residualization applied to ALL causal series.")
         else:
-            causal_df["SP100_Returns"] = stat_df.loc[z.index, "SP100_Returns"]
-            print("WARNING: Fama-French data missing, using raw Returns in causal graph.")
+            causal_df["Resid_Returns"] = stat_df.loc[z.index, "SP100_Returns"]
+            causal_df["Resid_VIX_Diff"] = stat_df.loc[z.index, "VIX_Diff"]
+            causal_df["Resid_Credit_Spread_Diff"] = stat_df.loc[z.index, "Credit_Spread_Diff"]
+            causal_df["Resid_Liquidity_Diff"] = stat_df.loc[z.index, "Liquidity_Diff"]
+            print("WARNING: Fama-French data missing, using raw series in causal graph.")
 
         causal_df["Vol_Innovations"] = z
-        causal_df["VIX_Diff"] = stat_df.loc[z.index, "VIX_Diff"]
-        causal_df["Credit_Spread_Diff"] = stat_df.loc[z.index, "Credit_Spread_Diff"]
-        causal_df["Liquidity_Diff"] = stat_df.loc[z.index, "Liquidity_Diff"]
 
 
         midpoint = len(causal_df) // 2
@@ -123,15 +148,30 @@ class CausalVolatilityPipeline:
         causal_outputs = execute_structural_causal_discovery(train_df, alpha_thresh=0.05)
 
         # Step 6: Adaptive Causal Multiplier
+        b_mult = self.baseline_multiplier if self.baseline_multiplier is not None else (2.0 if self.offline else 4.5)
+        m_mult = self.min_multiplier if self.min_multiplier is not None else (1.3 if self.offline else 1.8)
+        s_mult = self.static_multiplier if self.static_multiplier is not None else b_mult
+        c_thresh = self.calm_threshold if self.calm_threshold is not None else (1.8 if self.offline else 2.8)
+        lb = self.lookback if self.lookback is not None else (252 if self.offline else 126)
+        ewm = self.ewm_span if self.ewm_span is not None else (10 if self.offline else 5)
+        max_c = self.max_cash_days if self.max_cash_days is not None else (None if self.offline else 15)
+
         multipliers_series = construct_causal_multiplier(
-            causal_df, causal_outputs, baseline_multiplier=2.0, min_multiplier=1.3
+            causal_df, causal_outputs, baseline_multiplier=b_mult, min_multiplier=m_mult,
+            lookback=lb, ewm_span=ewm
         )
         train_mult = multipliers_series.loc[train_df.index]
         test_mult = multipliers_series.loc[test_df.index]
 
         # Step 7: Trailing Stop Ratchet Simulation
-        backtest_is = execute_causal_trailing_stop(df_raw, proc_df, train_mult)
-        backtest_oos = execute_causal_trailing_stop(df_raw, proc_df, test_mult)
+        backtest_is = execute_causal_trailing_stop(
+            df_raw, proc_df, train_mult,
+            static_multiplier=s_mult, calm_threshold=c_thresh, ma_window=self.ma_window, max_cash_days=max_c
+        )
+        backtest_oos = execute_causal_trailing_stop(
+            df_raw, proc_df, test_mult,
+            static_multiplier=s_mult, calm_threshold=c_thresh, ma_window=self.ma_window, max_cash_days=max_c
+        )
 
         # Step 8: Comprehensive Risk Metrics
         metrics_is = compute_comprehensive_risk_metrics(backtest_is)
@@ -199,6 +239,27 @@ class CausalVolatilityPipeline:
         eda_dir.mkdir(parents=True, exist_ok=True)
         res_dir.mkdir(parents=True, exist_ok=True)
 
+        try:
+            from causal_volatility.visualization.eda import (
+                plot_correlation_matrix,
+                plot_macro_overlay,
+                plot_return_and_vol_distributions,
+                plot_stationarity_transformation,
+                plot_volatility_estimators_comparison,
+            )
+            from causal_volatility.visualization.stage_diagnostics import (
+                plot_adaptive_multiplier_dynamics,
+                plot_causal_dag_pathways,
+                plot_garch_diagnostics,
+                plot_in_sample_equity_curve,
+                plot_out_of_sample_drawdown,
+                plot_out_of_sample_equity_curve,
+                plot_regime_reentry_analysis,
+            )
+        except ImportError as err:
+            print(f"   ⚠️ Skipping plot generation (visualization dependencies missing: {err})")
+            return
+
         # EDA Plots (1 to 5)
         plot_correlation_matrix(stat_df, eda_dir / "eda_1_correlation_matrix.png")
         plot_return_and_vol_distributions(stat_df["SP100_Returns"], stat_df["GK_Vol_Diff"], eda_dir / "eda_2_return_distribution_qq.png")
@@ -213,9 +274,20 @@ class CausalVolatilityPipeline:
         plot_causal_dag_pathways(causal_outputs, res_dir / "res_7_causal_dag_pathways.png")
 
         # Composite risk for multiplier plot
-        composite_risk = (2.0 - multipliers_series) / 0.7
+        b_mult = self.baseline_multiplier if self.baseline_multiplier is not None else (2.0 if self.offline else 4.5)
+        m_mult = self.min_multiplier if self.min_multiplier is not None else (1.3 if self.offline else 1.8)
+        c_thresh = self.calm_threshold if self.calm_threshold is not None else (1.8 if self.offline else 2.8)
+        denom = (b_mult - m_mult) if (b_mult - m_mult) > 0 else 0.7
+        composite_risk = (b_mult - multipliers_series) / denom
         full_backtest = pd.concat([backtest_is, backtest_oos])
-        plot_adaptive_multiplier_dynamics(full_backtest, composite_risk, res_dir / "res_8_adaptive_multiplier_dynamics.png")
+        plot_adaptive_multiplier_dynamics(
+            full_backtest,
+            composite_risk,
+            res_dir / "res_8_adaptive_multiplier_dynamics.png",
+            lambda_0=b_mult,
+            lambda_min=m_mult,
+            calm_threshold=c_thresh,
+        )
 
         plot_in_sample_equity_curve(backtest_is, res_dir / "res_9_is_equity_curve.png")
         plot_out_of_sample_equity_curve(backtest_oos, res_dir / "res_10_oos_equity_curve.png")

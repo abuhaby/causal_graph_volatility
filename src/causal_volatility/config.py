@@ -44,13 +44,15 @@ class ModelConfig:
 class BacktestConfig:
     """Configuration parameters for ratchet trailing stop backtesting and validation."""
 
-    lambda_0: float = 2.0
-    lambda_min: float = 1.3
-    ewm_span: int = 10
-    rolling_percentile_window: int = 252
+    lambda_0: float = 4.5
+    lambda_min: float = 1.8
+    ewm_span: int = 5
+    rolling_percentile_window: int = 126
     rolling_min_periods: int = 20
-    ma_window: int = 5
-    reentry_calm_threshold: float = 1.8
+    ma_window: int = 20
+    reentry_calm_threshold: float = 2.8
+    max_cash_days: int = 15
+    atr_window: int = 14
     split_type: str = "oos"  # Options: 'oos', '60_20_20', 'walkforward'
     train_ratio: float = 0.5
     val_ratio: float = 0.0

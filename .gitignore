@@ -42,6 +42,8 @@ htmlcov/
 .agents/
 .cache/
 profile.out
+draft_bin_gcolab/
+flowchart.png
 
 # OS artifacts
 .DS_Store

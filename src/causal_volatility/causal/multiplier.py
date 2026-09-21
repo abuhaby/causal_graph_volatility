@@ -44,10 +44,10 @@ def construct_causal_multiplier(
     Args:
         df_causal: Clean DataFrame containing all driver series.
         causal_outputs: Causal discovery result dictionary (with p_matrix, val_matrix, etc.).
-        baseline_multiplier: Multiplier under zero systemic shock (lambda_0, default: 2.0).
-        min_multiplier: Multiplier under maximum crisis stress (lambda_min, default: 1.3).
-        lookback: Rolling lookback window for percentile ranking (default: 252).
-        ewm_span: Exponential moving average smoothing span (default: 10).
+        baseline_multiplier: Multiplier under zero systemic shock (lambda_0, default: 4.5).
+        min_multiplier: Multiplier under maximum crisis stress (lambda_min, default: 1.8).
+        lookback: Rolling lookback window for percentile ranking (default: 126).
+        ewm_span: Exponential moving average smoothing span (default: 5).
         min_periods: Minimum observations before percentile evaluation starts (default: 20).
         alpha_thresh: Significance threshold for active edges (default: 0.05).
         lambda_0: Optional alias for baseline_multiplier.
@@ -56,7 +56,7 @@ def construct_causal_multiplier(
         **kwargs: Additional parameters for backward compatibility (e.g. causal_output).
 
     Returns:
-        pd.Series of dynamic multipliers indexed to df_causal.index, strictly in [1.3, 2.0].
+        pd.Series of dynamic multipliers indexed to df_causal.index, strictly in [1.8, 4.5].
     """
     # Harmonize parameter aliases
     if causal_outputs is None:
@@ -124,10 +124,10 @@ class CausalMultiplier:
 
     def __init__(
         self,
-        baseline_multiplier: float = 2.0,
-        min_multiplier: float = 1.3,
-        lookback: int = 252,
-        ewm_span: int = 10,
+        baseline_multiplier: float = 4.5,
+        min_multiplier: float = 1.8,
+        lookback: int = 126,
+        ewm_span: int = 5,
         min_periods: int = 20,
         alpha_thresh: float = 0.05,
     ):

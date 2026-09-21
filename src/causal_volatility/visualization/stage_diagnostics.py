@@ -171,17 +171,17 @@ def plot_causal_dag_pathways(
     ax2.text(0, 0, "Vol_Innovations\n(Target Y_t)", color="white", ha="center", va="center", fontsize=10, fontweight="bold", zorder=6)
 
     # Candidate source nodes surrounding
-    coords = {
-        "VIX_Diff": (-1.1, 0.7),
-        "Credit_Spread_Diff": (-1.1, -0.7),
-        "Liquidity_Diff": (1.1, 0.7),
-    }
+    base_coords = [(-1.1, 0.7), (-1.1, -0.7), (1.1, 0.7), (1.1, -0.7)]
+    source_names = [s for s in var_names if s != "Vol_Innovations"]
+    coords = {}
+    for idx, s_name in enumerate(source_names):
+        coords[s_name] = base_coords[idx % len(base_coords)]
 
     for name, (nx, ny) in coords.items():
         box = plt.Circle((nx, ny), 0.24, color="#f5f5f5", ec="#333333", lw=1.5, zorder=5)
         ax2.add_patch(box)
-        label_text = name.replace("_Diff", "\nShock")
-        ax2.text(nx, ny, label_text, color="#222222", ha="center", va="center", fontsize=9, fontweight="bold", zorder=6)
+        label_text = name.replace("Resid_", "").replace("_Diff", "\nShock").replace("_Returns", "\nReturns")
+        ax2.text(nx, ny, label_text, color="#222222", ha="center", va="center", fontsize=8.5, fontweight="bold", zorder=6)
 
         # Draw arrows for significant connections
         sig_rows = edge_df[(edge_df["Source"] == name) & (edge_df["Significant"])]
@@ -244,11 +244,14 @@ def plot_adaptive_multiplier_dynamics(
     backtest_df: pd.DataFrame,
     composite_risk: pd.Series,
     out_path: Union[str, Path],
+    lambda_0: Optional[float] = None,
+    lambda_min: Optional[float] = None,
+    calm_threshold: Optional[float] = None,
 ):
     """
     Stage 6 Diagnostics: Dynamic Adaptive Multiplier (lambda_t) Time-Series.
     Panel 1: Underlying S&P 100 price series with regime shading (Calm vs Stormy).
-    Panel 2: Dynamic Multiplier (contraction from 2.0 to 1.3).
+    Panel 2: Dynamic Multiplier.
     Panel 3: Composite Causal Risk Shock Z_t.
     Emits res_8_adaptive_multiplier_dynamics.png.
     """
@@ -260,22 +263,26 @@ def plot_adaptive_multiplier_dynamics(
     mult = backtest_df.loc[common_idx, "Causal_Multiplier"]
     z_risk = composite_risk.loc[common_idx]
 
+    l_max = lambda_0 if lambda_0 is not None else float(mult.max())
+    l_min = lambda_min if lambda_min is not None else float(mult.min())
+    c_thresh = calm_threshold if calm_threshold is not None else (l_max + l_min) / 2.0
+
     # Panel 1: Prices + Regime Tinting
     ax1.plot(prices.index, prices.values, color="#111111", linewidth=1.5, label="S&P 100 Close")
-    # Highlight stormy regime periods where mult < 1.8
-    stormy_mask = mult < 1.8
-    ax1.fill_between(prices.index, prices.min(), prices.max(), where=stormy_mask, color="#ff9999", alpha=0.35, label="Stormy Regime (λ < 1.8)")
+    # Highlight stormy regime periods
+    stormy_mask = mult < c_thresh
+    ax1.fill_between(prices.index, prices.min(), prices.max(), where=stormy_mask, color="#ff9999", alpha=0.35, label=f"Stormy Regime (λ < {c_thresh:.1f})")
     ax1.set_ylabel("S&P 100 Price ($)", fontsize=10, fontweight="bold")
     ax1.set_title("Asset Price Trajectory with Dynamic Regime Classification", fontsize=12, fontweight="bold")
     ax1.legend(loc="upper left", frameon=True)
 
     # Panel 2: Dynamic Causal Multiplier
     ax2.plot(mult.index, mult.values, color="#1f77b4", linewidth=1.4, label="Adaptive Multiplier λ_t")
-    ax2.axhline(2.0, color="#2ca02c", linestyle="--", linewidth=1.2, label="Baseline Multiplier (λ_0 = 2.0)")
-    ax2.axhline(1.8, color="#ff7f0e", linestyle=":", linewidth=1.0, label="Calm/Stormy Threshold (1.8)")
-    ax2.axhline(1.3, color="#d62728", linestyle="--", linewidth=1.2, label="Max Tightness Floor (λ_min = 1.3)")
+    ax2.axhline(l_max, color="#2ca02c", linestyle="--", linewidth=1.2, label=f"Baseline Multiplier (λ_0 = {l_max:.1f})")
+    ax2.axhline(c_thresh, color="#ff7f0e", linestyle=":", linewidth=1.0, label=f"Calm/Stormy Threshold ({c_thresh:.1f})")
+    ax2.axhline(l_min, color="#d62728", linestyle="--", linewidth=1.2, label=f"Max Tightness Floor (λ_min = {l_min:.1f})")
     ax2.set_ylabel("Multiplier λ_t", fontsize=10, fontweight="bold")
-    ax2.set_ylim(1.2, 2.1)
+    ax2.set_ylim(l_min * 0.9, l_max * 1.05)
     ax2.set_title("Adaptive Causal Multiplier Contraction Dynamics", fontsize=12, fontweight="bold")
     ax2.legend(loc="lower left", frameon=True)
 

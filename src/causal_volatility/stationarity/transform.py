@@ -122,9 +122,6 @@ class StationarityTransformer:
                 
         return stationary_df.dropna()
 
-
-        return stationary_df
-
     def fit_transform(self, df: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
         """Fit and transform market dataframe in a single call.
 

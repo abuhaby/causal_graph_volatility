@@ -77,7 +77,18 @@ class DataProcessor:
         )
         cleaned_df[vol_col_name] = vol_series
 
-        # 5. Remove any remaining NA rows from edge computations
+        # 5. Compute Average True Range (ATR) for trailing stop band
+        high = cleaned_df["SP100_High"]
+        low = cleaned_df["SP100_Low"]
+        close_prev = cleaned_df["SP100_Close"].shift(1)
+        tr = pd.concat([
+            high - low,
+            (high - close_prev).abs(),
+            (low - close_prev).abs(),
+        ], axis=1).max(axis=1)
+        cleaned_df["ATR_14"] = tr.rolling(14, min_periods=1).mean()
+
+        # 6. Remove any remaining NA rows from edge computations
         cleaned_df = cleaned_df.dropna()
 
 
@@ -86,7 +97,11 @@ class DataProcessor:
 
         target_columns = [
             "SP100_Close",
+            "SP100_High",
+            "SP100_Low",
+            "SP100_Open",
             vol_col_name,
+            "ATR_14",
             "VIX_Close",
             "Credit_Spread",
             "Liquidity_Proxy",

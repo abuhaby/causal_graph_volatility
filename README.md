@@ -123,13 +123,14 @@ causal_graph_volatility/
 │       │   ├── engine.py                    # Vectorized 1D ratchet state machine (calm/stormy regimes)
 │       │   ├── metrics.py                   # Annualized return, Sharpe ratio, MaxDD, and stop-out counts
 │       │   └── validation.py                # 5-fold walk-forward validation without lookahead leakage
-│       ├── causal/                          # Structural causal graph discovery & multiplier
-│       │   ├── discovery.py                 # Full-rank bivariate Granger causality testing (R2 fix)
-│       │   ├── multiplier.py                # Adaptive multiplier (λ_t ∈ [1.3, 2.0]) via rolling percentile
-│       │   └── pathways.py                  # Directed causal DAG network analysis & filtering
+│       ├── causal/                          # Structural causal graph discovery & multiplier modulation
+│       │   ├── discovery.py                 # Full-rank bivariate Granger causal DAG engine
+│       │   ├── multiplier.py                # Composite risk index & rolling percentile multiplier (λ_t)
+│       │   ├── pathways.py                  # Graph topological path analysis & p-value filtering
+│       │   └── precision_benchmark.py       # Graphical LASSO sparse inverse covariance benchmark
 │       ├── data/                            # Market data acquisition & alignment
-│       │   ├── fetcher.py                   # 3-tier fallback data loader (FRED JSON -> CSV -> Synthetic)
-│       │   ├── processor.py                 # Intraday feature alignment & liquidity proxy computation
+│       │   ├── fetcher.py                   # 3-tier fallback data loader (FRED JSON -> CSV -> Synthetic) + Fama-French
+│       │   ├── processor.py                 # Intraday feature alignment, ATR-14 & liquidity proxy computation
 │       │   └── storage.py                   # Local fixture caching & offline serialization
 │       ├── estimators/                      # Intraday realized volatility estimators
 │       │   ├── base.py                      # BaseRealizedVolatilityEstimator abstract contract
@@ -158,7 +159,7 @@ causal_graph_volatility/
 ├── tests/                                   # Exhaustive 4-tier test suite (100 passing tests)
 │   ├── conftest.py                          # Shared pytest fixtures & test configuration
 │   ├── fixtures/                            # Deterministic air-gapped test datasets
-│   │   └── market_data_2016_2026.csv        # 10-year multi-asset market fixture
+│   │   └── market_data_2016_2026.csv        # 10-year multi-asset market fixture + FF3 factors
 │   ├── tier1_unit/                          # Tier 1: Mathematical invariants & analytical formulas
 │   ├── tier2_integration/                   # Tier 2: Component integration & contract validation
 │   ├── tier3_regression/                    # Tier 3: Numerical parity against historical logs
@@ -167,6 +168,44 @@ causal_graph_volatility/
 ├── pyproject.toml                           # PEP 517/518 build metadata, dependencies & CLI entrypoints
 └── README.md                                # Project overview, architecture & empirical results
 ```
+
+## Empirical Performance Results
+
+Following the **Fama-French 3-Factor shared-beta residualization** and **ATR-calibrated dynamic trailing stop ratchet** overhaul, the Causal Adaptive Strategy **outperforms Buy & Hold across all primary performance and risk metrics**:
+
+### In-Sample (TRAIN: 2016–2020, 1,252 Bars)
+
+| Metric | Buy & Hold | Standard Baseline | Causal Adaptive | Improvement vs B&H |
+|:-------|:----------:|:-----------------:|:---------------:|:------------------:|
+| **Annualized Return** | 17.59% | 19.03% | **18.02%** | **+0.43%** |
+| **Annualized Volatility** | 19.21% | 15.03% | **13.52%** | **-5.69% (lower)** |
+| **Sharpe Ratio** | 0.916 | 1.266 | **1.333** | **+45.5% (higher)** |
+| **Maximum Drawdown** | -31.44% | -20.19% | **-20.85%** | **+33.7% (shallower)** |
+| **Stop-Out Events** | 0 | 15 | **21** | — |
+
+### Out-of-Sample (TEST: 2021–2026, 1,253 Bars)
+
+| Metric | Buy & Hold | Standard Baseline | Causal Adaptive | Improvement vs B&H |
+|:-------|:----------:|:-----------------:|:---------------:|:------------------:|
+| **Annualized Return** | 16.50% | 12.59% | **16.68%** | **+0.18%** |
+| **Annualized Volatility** | 17.70% | 15.01% | **13.64%** | **-4.06% (lower)** |
+| **Sharpe Ratio** | 0.932 | 0.839 | **1.223** | **+31.2% (higher)** |
+| **Maximum Drawdown** | -26.47% | -22.46% | **-14.22%** | **+46.3% (shallower)** |
+| **Stop-Out Events** | 0 | 16 | **28** | — |
+
+### 5-Fold Expanding Walk-Forward Cross-Validation
+
+| Fold | Training Window | Test Window | B&H Sharpe | Causal Sharpe | Causal Wins? | B&H Max DD | Causal Max DD |
+|:----:|:---------------:|:-----------:|:----------:|:-------------:|:------------:|:----------:|:-------------:|
+| **1** | 2016-01 to 2017-12 | 2017-12 to 2019-08 | 0.338 | **1.204** | **YES** | -19.60% | **-9.60%** |
+| **2** | 2016-01 to 2019-08 | 2019-08 to 2021-03 | 0.878 | 0.691 | No | -31.44% | **-20.98%** |
+| **3** | 2016-01 to 2021-03 | 2021-03 to 2022-10 | -0.258 | **-0.063** | **YES** | -26.47% | **-14.46%** |
+| **4** | 2016-01 to 2022-10 | 2022-10 to 2024-05 | 2.105 | 1.778 | No | -9.24% | -10.01% |
+| **5** | 2016-01 to 2024-05 | 2024-05 to 2025-12 | 1.226 | **1.710** | **YES** | -19.80% | **-12.73%** |
+
+* **Sharpe Win Rate vs Buy & Hold**: **60.0%** (3 of 5 folds)
+* **Maximum Drawdown Win Rate vs Buy & Hold**: **80.0%** (4 of 5 folds)
+* **Mean Causal Sharpe**: **1.064** vs **Mean B&H Sharpe**: **0.858**
 
 ## Quick Start & Reproducibility
 
@@ -184,7 +223,7 @@ causal-volatility --model garch --split oos --offline
 
 * **Full Quantitative Report**: [`docs/reports/quant_diagnostic_report.md`](docs/reports/quant_diagnostic_report.md)
 * **EDA Graphics (Stage 1-3)** (`figures/eda/`):
-  * [`figures/eda/eda_1_correlation_matrix.png`](figures/eda/eda_1_correlation_matrix.png): Cross-asset correlation heatmap across differenced stationary inputs.
+  * [`figures/eda/eda_1_correlation_matrix.png`](figures/eda/eda_1_correlation_matrix.png): Cross-asset precision (partial correlation) matrix across differenced stationary inputs.
   * [`figures/eda/eda_2_return_distribution_qq.png`](figures/eda/eda_2_return_distribution_qq.png): Asset return distribution, excess kurtosis, and normal Q-Q plot.
   * [`figures/eda/eda_3_macro_overlay.png`](figures/eda/eda_3_macro_overlay.png): S&P 100 cumulative wealth overlay against VIX and Moody's Baa credit spreads.
   * [`figures/eda/eda_4_volatility_estimators_comparison.png`](figures/eda/eda_4_volatility_estimators_comparison.png): Multi-estimator realized volatility comparison (Garman-Klass, Parkinson, Rogers-Satchell, Close-to-Close).

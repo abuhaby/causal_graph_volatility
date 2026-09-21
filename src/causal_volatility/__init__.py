@@ -13,6 +13,10 @@ from causal_volatility.causal.pathways import (
     CausalGraph,
     analyze_causal_pathways,
 )
+from causal_volatility.causal.precision_benchmark import (
+    cross_validate_edges,
+    estimate_precision_matrix,
+)
 from causal_volatility.config import BacktestConfig, DataConfig, ModelConfig
 from causal_volatility.data.fetcher import SystematicRiskDataFetcher
 from causal_volatility.data.processor import DataProcessor
@@ -40,22 +44,25 @@ from causal_volatility.backtest.engine import execute_causal_trailing_stop, run_
 from causal_volatility.backtest.metrics import compute_comprehensive_risk_metrics
 from causal_volatility.backtest.validation import run_walk_forward_validation
 from causal_volatility.pipeline import CausalVolatilityPipeline
-from causal_volatility.visualization.eda import (
-    plot_correlation_matrix,
-    plot_macro_overlay,
-    plot_return_and_vol_distributions,
-    plot_stationarity_transformation,
-    plot_volatility_estimators_comparison,
-)
-from causal_volatility.visualization.stage_diagnostics import (
-    plot_adaptive_multiplier_dynamics,
-    plot_causal_dag_pathways,
-    plot_garch_diagnostics,
-    plot_in_sample_equity_curve,
-    plot_out_of_sample_drawdown,
-    plot_out_of_sample_equity_curve,
-    plot_regime_reentry_analysis,
-)
+try:
+    from causal_volatility.visualization.eda import (
+        plot_correlation_matrix,
+        plot_macro_overlay,
+        plot_return_and_vol_distributions,
+        plot_stationarity_transformation,
+        plot_volatility_estimators_comparison,
+    )
+    from causal_volatility.visualization.stage_diagnostics import (
+        plot_adaptive_multiplier_dynamics,
+        plot_causal_dag_pathways,
+        plot_garch_diagnostics,
+        plot_in_sample_equity_curve,
+        plot_out_of_sample_drawdown,
+        plot_out_of_sample_equity_curve,
+        plot_regime_reentry_analysis,
+    )
+except ImportError:
+    pass
 
 __version__ = "0.1.0"
 
@@ -87,6 +94,8 @@ __all__ = [
     "execute_structural_causal_discovery",
     "StructuralCausalDiscovery",
     "analyze_causal_pathways",
+    "estimate_precision_matrix",
+    "cross_validate_edges",
     "CausalGraph",
     "CausalEdge",
     "construct_causal_multiplier",
