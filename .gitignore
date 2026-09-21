@@ -48,3 +48,6 @@ flowchart.png
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Model checkpoints / training telemetry
+catboost_info/
