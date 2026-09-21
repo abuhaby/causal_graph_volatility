@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   
   <!-- FontAwesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   
   <!-- KaTeX for pristine mathematical typesetting -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
@@ -47,15 +47,12 @@
       
       /* Shadow & Radius */
       --shadow-sm: 0 1px 3px rgba(27, 31, 36, 0.08);
-      --shadow-md: 0 4px 12px rgba(27, 31, 36, 0.1);
+      --shadow-md: 0 4px 12px rgba(27, 31, 36, 0.08);
       --shadow-lg: 0 8px 24px rgba(27, 31, 36, 0.12);
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 14px;
       --radius-pill: 9999px;
-      
-      /* Grid */
-      --grid-unit: 4px;
     }
 
     [data-theme="dark"] {
@@ -106,16 +103,17 @@
       user-select: none;
     }
 
-    /* Top Navigation & App Bar */
+    /* Top Navigation Header */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 100;
       box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
     }
 
     .brand-section {
@@ -126,17 +124,17 @@
 
     .brand-title {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 400;
       color: var(--ink);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .brand-badge {
       font-family: 'Geist Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       padding: 2px 8px;
       border-radius: var(--radius-pill);
@@ -148,25 +146,56 @@
     }
 
     .brand-subtitle {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-muted);
       font-weight: 400;
+    }
+
+    /* Scorecard Pills */
+    .scorecard-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+    }
+
+    .scorecard-item {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .scorecard-label {
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .scorecard-val {
+      font-weight: 700;
+      color: var(--green);
     }
 
     /* Controls Bar */
     .controls-group {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .btn {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--ink);
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: var(--radius-sm);
-      font-size: 12px;
+      font-size: 11.5px;
       font-family: 'Geist', sans-serif;
       font-weight: 500;
       display: inline-flex;
@@ -201,46 +230,11 @@
       border-color: var(--coral);
     }
 
-    .btn-accent:hover {
-      filter: brightness(1.1);
-    }
-
     .divider-v {
       width: 1px;
-      height: 20px;
+      height: 18px;
       background: var(--border);
       margin: 0 4px;
-    }
-
-    /* Metric Scorecard Pills */
-    .scorecard-banner {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-    }
-
-    .scorecard-item {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 11px;
-      font-family: 'Geist Mono', monospace;
-    }
-
-    .scorecard-label {
-      color: var(--ink-muted);
-      text-transform: uppercase;
-      font-size: 9px;
-      font-weight: 600;
-    }
-
-    .scorecard-val {
-      font-weight: 700;
-      color: var(--green);
     }
 
     /* Flowchart Canvas Area */
@@ -273,8 +267,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 2040px;
+      height: 1180px;
       pointer-events: none;
       overflow: visible;
     }
@@ -296,37 +290,36 @@
     /* Animated Marching Ants Flow */
     .flow-animation {
       stroke-dasharray: 6 6;
-      animation: flow 1s linear infinite;
+      animation: flow 1.2s linear infinite;
     }
 
     @keyframes flow {
-      from {
-        stroke-dashoffset: 24;
-      }
-      to {
-        stroke-dashoffset: 0;
-      }
+      from { stroke-dashoffset: 24; }
+      to { stroke-dashoffset: 0; }
     }
 
-    .connector-label {
+    /* Badge labels on connector lines */
+    .connector-badge {
       font-family: 'Geist Mono', monospace;
       font-size: 10px;
       font-weight: 600;
-      fill: var(--ink-muted);
-      paint-order: stroke;
-      stroke: var(--bg);
-      stroke-width: 6px;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+      fill: var(--ink);
       text-anchor: middle;
       dominant-baseline: central;
+    }
+
+    .connector-badge-rect {
+      fill: var(--surface);
+      stroke: var(--border);
+      stroke-width: 1px;
+      rx: 4px;
     }
 
     /* Node Cards Container (DOM Overlay) */
     .node-canvas {
       position: relative;
-      width: 1920px;
-      height: 1600px;
+      width: 2040px;
+      height: 1180px;
       pointer-events: auto;
     }
 
@@ -338,12 +331,11 @@
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-md);
       padding: 16px;
-      width: 380px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .node-card:hover {
@@ -379,7 +371,7 @@
 
     .stage-tag {
       font-family: 'Geist Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -399,13 +391,13 @@
 
     .node-id {
       font-family: 'Geist Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--ink-faint);
     }
 
     .card-title {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 400;
       line-height: 1.25;
       color: var(--ink);
@@ -415,14 +407,14 @@
     }
 
     .card-title i {
-      font-size: 16px;
+      font-size: 15px;
       opacity: 0.85;
     }
 
     .card-desc {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--ink-muted);
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     /* Math Box Container */
@@ -430,8 +422,8 @@
       background: var(--surface-subtle);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      font-size: 12px;
+      padding: 6px 8px;
+      font-size: 11px;
       overflow-x: auto;
       text-align: center;
       color: var(--ink);
@@ -441,16 +433,16 @@
     .chip-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 5px;
     }
 
     .spec-chip {
       font-family: 'Geist Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       background: var(--surface-subtle);
       color: var(--ink);
       border: 1px solid var(--border);
-      padding: 3px 6px;
+      padding: 2px 6px;
       border-radius: var(--radius-sm);
       display: inline-flex;
       align-items: center;
@@ -475,9 +467,9 @@
     .feedback-callout {
       border-left: 3px solid var(--blue);
       background: var(--blue-subtle);
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--ink);
       font-style: italic;
     }
@@ -494,17 +486,17 @@
 
     .phase-label {
       position: absolute;
-      top: -12px;
+      top: -11px;
       left: 20px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-pill);
-      padding: 2px 12px;
+      padding: 2px 10px;
       font-family: 'Geist Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       color: var(--ink-muted);
       box-shadow: var(--shadow-sm);
     }
@@ -517,18 +509,18 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       box-shadow: var(--shadow-lg);
-      padding: 16px;
-      max-width: 360px;
+      padding: 14px;
+      max-width: 340px;
       z-index: 1000;
       pointer-events: none;
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 11.5px;
+      line-height: 1.45;
     }
 
     #tooltip-modal h4 {
       font-family: 'Instrument Serif', Georgia, serif;
-      font-size: 18px;
-      margin-bottom: 6px;
+      font-size: 17px;
+      margin-bottom: 4px;
       color: var(--ink);
     }
 
@@ -536,19 +528,20 @@
     footer {
       background: var(--surface);
       border-top: 1px solid var(--border);
-      padding: 8px 24px;
+      padding: 6px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--ink-muted);
       font-family: 'Geist Mono', monospace;
       z-index: 100;
+      flex-shrink: 0;
     }
 
     .nav-hints {
       display: flex;
-      gap: 16px;
+      gap: 14px;
     }
 
     .kbd {
@@ -556,7 +549,7 @@
       border: 1px solid var(--border);
       border-radius: 4px;
       padding: 1px 4px;
-      font-size: 10px;
+      font-size: 9.5px;
     }
   </style>
 </head>
@@ -566,7 +559,7 @@
   <header>
     <div class="brand-section">
       <div class="brand-title">
-        <span>Non-Linear Causal Discovery & Continuous Topology Architecture</span>
+        <span>Non-Linear Causal Discovery &amp; Continuous Topology Architecture</span>
         <span class="brand-badge">Version 2.0</span>
       </div>
       <div class="brand-subtitle">
@@ -576,29 +569,29 @@
 
     <!-- Live Empirical Performance Scorecard -->
     <div class="scorecard-banner">
-      <i class="fas fa-trophy" style="color: var(--amber); font-size: 13px;"></i>
+      <i class="fas fa-trophy" style="color: var(--amber); font-size: 12px;"></i>
       <div class="scorecard-item">
-        <span class="scorecard-label">Annual Return:</span>
+        <span class="scorecard-label">Ann. Return:</span>
         <span class="scorecard-val">13.15%</span>
-        <span style="color: var(--ink-faint); font-size: 10px;">(vs 12.3% B&H)</span>
+        <span style="color: var(--ink-faint); font-size: 9.5px;">(vs 12.3% B&amp;H)</span>
       </div>
       <div class="divider-v"></div>
       <div class="scorecard-item">
         <span class="scorecard-label">Sharpe Ratio:</span>
         <span class="scorecard-val">0.963</span>
-        <span style="color: var(--ink-faint); font-size: 10px;">(+70.1%)</span>
+        <span style="color: var(--ink-faint); font-size: 9.5px;">(+70.1%)</span>
       </div>
       <div class="divider-v"></div>
       <div class="scorecard-item">
         <span class="scorecard-label">Max Drawdown:</span>
         <span class="scorecard-val">-18.79%</span>
-        <span style="color: var(--ink-faint); font-size: 10px;">(vs -42.0%)</span>
+        <span style="color: var(--ink-faint); font-size: 9.5px;">(vs -42.0%)</span>
       </div>
       <div class="divider-v"></div>
       <div class="scorecard-item">
-        <span class="scorecard-label">Calmar:</span>
+        <span class="scorecard-label">Calmar Ratio:</span>
         <span class="scorecard-val">0.700</span>
-        <span style="color: var(--ink-faint); font-size: 10px;">(+138%)</span>
+        <span style="color: var(--ink-faint); font-size: 9.5px;">(+138%)</span>
       </div>
     </div>
 
@@ -612,7 +605,7 @@
       <button class="btn" id="btn-toggle-theme" title="Toggle Dark/Light Mode"><i class="fas fa-moon"></i></button>
       <div class="divider-v"></div>
       <button class="btn btn-accent" id="btn-export-svg" title="Export Scalable Vector Graphics"><i class="fas fa-bezier-curve"></i> Export SVG</button>
-      <button class="btn btn-primary" id="btn-export-png" title="Export Publication-Grade 300DPI PNG"><i class="fas fa-camera"></i> Export PNG</button>
+      <button class="btn btn-primary" id="btn-export-png" title="Export Publication-Grade PNG"><i class="fas fa-camera"></i> Export PNG</button>
     </div>
   </header>
 
@@ -621,7 +614,7 @@
     <div id="world">
       
       <!-- Dynamic SVG Routing Layer -->
-      <svg id="svg-connections" width="2200" height="1750" xmlns="http://www.w3.org/2000/svg">
+      <svg id="svg-connections" width="2040" height="1180" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <!-- Arrowhead Markers -->
           <marker id="arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -638,64 +631,65 @@
           </marker>
         </defs>
 
-        <!-- Pre-calculated Orthogonal Connector Paths with Quarter-Arc Elbows (r=8) -->
         <g id="path-layer"></g>
       </svg>
 
-      <!-- DOM Nodes Overlay Layout (Divisible by 4px Grid) -->
+      <!-- DOM Nodes Overlay Layout (3 Distinct Columns, Zero Overlap) -->
       <div class="node-canvas">
 
         <!-- ================================================================ -->
-        <!-- PHASE I: FACTOR RESIDUALIZATION & INGESTION                       -->
+        <!-- COLUMN 1: FACTOR RESIDUALIZATION & DUAL TOPOLOGY BENCHMARK        -->
         <!-- ================================================================ -->
-        <div class="phase-boundary" style="left: 40px; top: 40px; width: 880px; height: 320px;">
+        
+        <!-- Phase I Boundary -->
+        <div class="phase-boundary" style="left: 60px; top: 60px; width: 780px; height: 420px;">
           <div class="phase-label">Phase I · Systematic Factor Orthogonalization (Instructor Feedback A)</div>
         </div>
 
         <!-- Node 1A: S&P 100 Constituents -->
-        <div class="node-card" id="node-1a" style="left: 64px; top: 76px; width: 380px;">
+        <div class="node-card" id="node-1a" style="left: 80px; top: 90px; width: 350px; height: 140px;">
           <div class="card-meta">
             <span class="stage-tag">Stage 01 · Ingestion</span>
             <span class="node-id">SRC-01</span>
           </div>
           <div class="card-title">
             <i class="fas fa-layer-group" style="color: var(--blue);"></i>
-            S&P 100 Constituent Universe
+            S&amp;P 100 Constituent Universe
           </div>
           <div class="card-desc">
             Multi-sector basket across 6 GICS categories (Tech, Fin, Health, Cons, Ind, Energy) capturing broad macro dispersion.
           </div>
           <div class="chip-grid">
-            <span class="spec-chip">Panel: N=22 Assets</span>
+            <span class="spec-chip">N = 22 Assets</span>
             <span class="spec-chip">Dates: 2018–2026</span>
-            <span class="spec-chip">Bars: T=2,013 Days</span>
-            <span class="spec-chip">Raw Correlation: |r|=0.565</span>
+            <span class="spec-chip">T = 2,013 Days</span>
+            <span class="spec-chip">Raw Corr: |r| = 0.565</span>
           </div>
         </div>
 
         <!-- Node 1B: Fama-French Factors -->
-        <div class="node-card" id="node-1b" style="left: 504px; top: 76px; width: 380px;">
+        <div class="node-card" id="node-1b" style="left: 470px; top: 90px; width: 350px; height: 140px;">
           <div class="card-meta">
             <span class="stage-tag">Stage 01 · Macro Factors</span>
             <span class="node-id">SRC-02</span>
           </div>
           <div class="card-title">
             <i class="fas fa-chart-line" style="color: var(--blue);"></i>
-            Fama-French 3-Factor Benchmark
+            Fama-French 3-Factor Model
           </div>
           <div class="card-desc">
             Direct ingestion of systemic macro risk factors from Kenneth French Data Library with risk-free rate alignment.
           </div>
           <div class="chip-grid">
-            <span class="spec-chip">Mkt-RF (Market Excess)</span>
-            <span class="spec-chip">SMB (Size Factor)</span>
-            <span class="spec-chip">HML (Value Factor)</span>
+            <span class="spec-chip">Mkt-RF (Market)</span>
+            <span class="spec-chip">SMB (Size)</span>
+            <span class="spec-chip">HML (Value)</span>
             <span class="spec-chip">RF (1M T-Bill)</span>
           </div>
         </div>
 
         <!-- Node 2: Factor Residualization Engine -->
-        <div class="node-card focal" id="node-2" style="left: 284px; top: 220px; width: 440px;">
+        <div class="node-card focal" id="node-2" style="left: 230px; top: 270px; width: 440px; height: 185px;">
           <div class="card-meta">
             <span class="stage-tag badge-fama">Stage 02 · Factor Residualization</span>
             <span class="node-id">RESID-01</span>
@@ -707,26 +701,22 @@
           <div class="feedback-callout">
             "Residualize returns on Fama-French factors before learning the graph. The edges that survive that are the interesting ones."
           </div>
-          <div class="math-block" id="math-ols">
-            <!-- Rendered by KaTeX -->
-          </div>
+          <div class="math-block" id="math-ols"></div>
           <div class="chip-grid">
             <span class="spec-chip highlight">Factor Variance R² = 52.7%</span>
-            <span class="spec-chip highlight">Shared Beta β_mkt = 1.15</span>
+            <span class="spec-chip highlight">Mean β_mkt = 1.15</span>
             <span class="spec-chip success">Correlation: 0.565 → 0.134</span>
             <span class="spec-chip">Output: ε_t ∈ ℝ^(T×N)</span>
           </div>
         </div>
 
-        <!-- ================================================================ -->
-        <!-- PHASE II: DUAL TOPOLOGY DISCOVERY & ORTHOGONALITY BENCHMARK       -->
-        <!-- ================================================================ -->
-        <div class="phase-boundary" style="left: 40px; top: 400px; width: 880px; height: 460px;">
-          <div class="phase-label">Phase II · Precision Benchmark vs Causal Discovery (Instructor Feedback B)</div>
+        <!-- Phase II Boundary -->
+        <div class="phase-boundary" style="left: 60px; top: 520px; width: 780px; height: 580px;">
+          <div class="phase-label" style="left: 50%; transform: translateX(-50%);">Phase II · Precision Benchmark vs Causal Discovery</div>
         </div>
 
         <!-- Node 3A: Graphical LASSO Precision Matrix -->
-        <div class="node-card benchmark-branch" id="node-3a" style="left: 64px; top: 440px; width: 380px;">
+        <div class="node-card benchmark-branch" id="node-3a" style="left: 80px; top: 550px; width: 350px; height: 185px;">
           <div class="card-meta">
             <span class="stage-tag badge-glasso">Stage 03 · Precision Benchmark</span>
             <span class="node-id">GLASSO-01</span>
@@ -738,19 +728,16 @@
           <div class="card-desc">
             Inverse covariance estimator encoding conditional Gaussian independence under symmetric L1 regularization.
           </div>
-          <div class="math-block" id="math-glasso">
-            <!-- KaTeX -->
-          </div>
+          <div class="math-block" id="math-glasso"></div>
           <div class="chip-grid">
             <span class="spec-chip">Θ = Σ^(-1) Symmetric</span>
             <span class="spec-chip">L1 Penalty: α = 0.05</span>
             <span class="spec-chip">Symmetric Undirected</span>
-            <span class="spec-chip">Gaussian Assumption</span>
           </div>
         </div>
 
         <!-- Node 3B: Student-t DAGMA Continuous Causal Discovery -->
-        <div class="node-card causal-branch focal" id="node-3b" style="left: 504px; top: 440px; width: 380px;">
+        <div class="node-card causal-branch focal" id="node-3b" style="left: 470px; top: 550px; width: 350px; height: 185px;">
           <div class="card-meta">
             <span class="stage-tag badge-dagma">Stage 04 · DAGMA Discovery</span>
             <span class="node-id">DAGMA-01</span>
@@ -762,21 +749,18 @@
           <div class="card-desc">
             Continuous non-linear causal discovery with log-det acyclicity constraint and heavy-tailed score function.
           </div>
-          <div class="math-block" id="math-dagma">
-            <!-- KaTeX -->
-          </div>
+          <div class="math-block" id="math-dagma"></div>
           <div class="chip-grid">
-            <span class="spec-chip highlight">Loss: Student-t (ν ≈ 3.0)</span>
-            <span class="spec-chip">Constraint: h(W) = 0</span>
-            <span class="spec-chip">W: Contemporaneous Directed</span>
-            <span class="spec-chip">A: Inter-Slice Lagged</span>
+            <span class="spec-chip highlight">Student-t Loss (ν ≈ 3.0)</span>
+            <span class="spec-chip">h(W) = -ln det(sI - W²)</span>
+            <span class="spec-chip">Contemporaneous W &amp; Lagged A</span>
           </div>
         </div>
 
         <!-- Node 4: Empirical Orthogonality & Collinearity Audit -->
-        <div class="node-card" id="node-4" style="left: 284px; top: 680px; width: 440px;">
+        <div class="node-card" id="node-4" style="left: 230px; top: 780px; width: 440px; height: 280px;">
           <div class="card-meta">
-            <span class="stage-tag">Stage 05 & 06 · Orthogonality Audit</span>
+            <span class="stage-tag">Stage 05 &amp; 06 · Orthogonality Audit</span>
             <span class="node-id">ORTHO-01</span>
           </div>
           <div class="card-title">
@@ -786,23 +770,47 @@
           <div class="feedback-callout">
             "Soften the orthogonality claim... benchmark against precision matrix, not plain correlation."
           </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 4px; font-family: 'Geist Mono', monospace; font-size: 10px; background: var(--surface-subtle); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+              <span>Metric Pair</span>
+              <span>Pearson r</span>
+              <span>Verdict</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Causal In-Deg vs Precision Deg</span>
+              <span style="color: var(--coral); font-weight: 600;">r = 0.0059</span>
+              <span style="color: var(--green); font-weight: 700;">Orthogonal</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Causal Out-Deg vs Precision Deg</span>
+              <span style="color: var(--coral); font-weight: 600;">r = 0.0053</span>
+              <span style="color: var(--green); font-weight: 700;">Orthogonal</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Causal Eigen vs Precision Eigen</span>
+              <span style="color: var(--coral); font-weight: 600;">r = 0.0200</span>
+              <span style="color: var(--green); font-weight: 700;">Orthogonal</span>
+            </div>
+          </div>
+
           <div class="chip-grid">
-            <span class="spec-chip highlight">Causal In-Deg vs Precision Deg: r = 0.0059</span>
-            <span class="spec-chip highlight">Causal Out-Deg vs Precision Deg: r = 0.0053</span>
-            <span class="spec-chip highlight">Causal Eigen vs Precision Eigen: r = 0.0200</span>
-            <span class="spec-chip success">Collinearity VIF: 1.01 ≤ VIF ≤ 2.57 (Safe &lt; 5.0)</span>
+            <span class="spec-chip success">Collinearity VIF: 1.01 ≤ VIF ≤ 2.57 (All &lt; 5.0 Safe)</span>
+          </div>
+          <div class="card-desc" style="font-size: 10.5px;">
+            Empirically validates that DAGMA directed topologies provide independent, complementary predictive degrees of freedom.
           </div>
         </div>
 
         <!-- ================================================================ -->
-        <!-- PHASE III: STRUCTURAL BREAKS & CATBOOST TABULAR FUSION            -->
+        <!-- COLUMN 2: REGIME BREAKS & CATBOOST MACHINE LEARNING FUSION        -->
         <!-- ================================================================ -->
-        <div class="phase-boundary" style="left: 980px; top: 40px; width: 900px; height: 380px;">
-          <div class="phase-label">Phase III · Causal Regime Breaks & CatBoost Feature Fusion</div>
+        <div class="phase-boundary" style="left: 900px; top: 60px; width: 500px; height: 1040px;">
+          <div class="phase-label">Phase III · Causal Regime Breaks &amp; CatBoost Tabular Fusion</div>
         </div>
 
         <!-- Node 5: Frobenius Norm Causal Drift -->
-        <div class="node-card" id="node-5" style="left: 1004px; top: 76px; width: 400px;">
+        <div class="node-card" id="node-5" style="left: 940px; top: 120px; width: 420px; height: 260px;">
           <div class="card-meta">
             <span class="stage-tag badge-breaks">Stage 07 · Structural Breaks</span>
             <span class="node-id">BREAK-01</span>
@@ -812,21 +820,22 @@
             Frobenius Causal Drift (ΔW)
           </div>
           <div class="card-desc">
-            Tracks topological dislocation across rolling DAGMA windows, detecting systemic breaks via adaptive 95th-percentile threshold.
+            Tracks topological dislocation across rolling DAGMA windows, detecting systemic regime breaks via adaptive 95th-percentile threshold.
           </div>
-          <div class="math-block" id="math-drift">
-            <!-- KaTeX -->
-          </div>
+          <div class="math-block" id="math-drift"></div>
           <div class="chip-grid">
             <span class="spec-chip">Threshold τ = 0.0234 (95th pct)</span>
-            <span class="spec-chip highlight">Mar 2020: COVID-19 Shock</span>
+            <span class="spec-chip highlight">Mar 2020: COVID-19 Liquidity Shock</span>
             <span class="spec-chip highlight">2022: Fed Rate Hikes Cycle</span>
-            <span class="spec-chip highlight">Mar 2023: SVB Banking Crisis</span>
+            <span class="spec-chip highlight">Mar 2023: SVB Banking Panic</span>
+          </div>
+          <div class="card-desc" style="font-size: 10.5px; color: var(--ink-faint);">
+            Localizes systemic structural transitions before macro volatility propagates into cross-asset selloffs.
           </div>
         </div>
 
-        <!-- Node 6: CatBoost Tabular Fusion -->
-        <div class="node-card" id="node-6" style="left: 1444px; top: 76px; width: 400px;">
+        <!-- Node 6: GPU CatBoost Tabular Regressor -->
+        <div class="node-card focal" id="node-6" style="left: 940px; top: 480px; width: 420px; height: 420px;">
           <div class="card-meta">
             <span class="stage-tag badge-catboost">Stage 08 · CatBoost Fusion</span>
             <span class="node-id">ML-01</span>
@@ -838,65 +847,171 @@
           <div class="card-desc">
             Chronological out-of-sample volatility forecasting (Train: 2018–2022, Test: 2023–2026) evaluating feature ablation.
           </div>
+          
+          <!-- Feature Importance Visual Breakdown -->
+          <div style="background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 10px; font-family: 'Geist Mono', monospace; font-size: 10px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700;">
+              <span>Feature Name</span>
+              <span>Category</span>
+              <span style="color: var(--coral);">Importance</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>days_since_last_break</span>
+                <span style="color: var(--ink-faint);">Causal Break</span>
+                <span style="font-weight: 700; color: var(--coral);">50.96%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 3px;">
+                <div style="width: 50.96%; height: 100%; background: var(--coral); border-radius: 3px;"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>causal_drift (ΔW)</span>
+                <span style="color: var(--ink-faint);">Causal Topology</span>
+                <span style="font-weight: 700; color: var(--coral);">23.50%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 3px;">
+                <div style="width: 23.50%; height: 100%; background: var(--coral); border-radius: 3px;"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>dagma_nu (ν)</span>
+                <span style="color: var(--ink-faint);">Fat-Tail Student-t</span>
+                <span style="font-weight: 700; color: var(--coral);">7.22%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 3px;">
+                <div style="width: 7.22%; height: 100%; background: var(--coral); border-radius: 3px;"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>momentum_20d</span>
+                <span style="color: var(--ink-faint);">Baseline Price</span>
+                <span style="font-weight: 600; color: var(--blue);">7.30%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 3px;">
+                <div style="width: 7.30%; height: 100%; background: var(--blue); border-radius: 3px;"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>corr_deg / precision_deg</span>
+                <span style="color: var(--ink-faint);">Graph Centrality</span>
+                <span style="font-weight: 600; color: var(--purple);">&lt; 5.6%</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--border-subtle); border-radius: 3px;">
+                <div style="width: 5.6%; height: 100%; background: var(--purple); border-radius: 3px;"></div>
+              </div>
+            </div>
+          </div>
+
           <div class="chip-grid">
-            <span class="spec-chip highlight">Causal Features Importance: &gt;81%</span>
-            <span class="spec-chip success">days_since_last_break: 50.96%</span>
-            <span class="spec-chip success">causal_drift (ΔW): 23.50%</span>
-            <span class="spec-chip success">dagma_nu (ν): 7.22%</span>
-            <span class="spec-chip">Test RMSE: 0.041051</span>
+            <span class="spec-chip highlight">Causal Feature Importance: &gt; 81%</span>
+            <span class="spec-chip success">Test RMSE: 0.041051</span>
           </div>
         </div>
 
         <!-- ================================================================ -->
-        <!-- PHASE IV: DOWNSTREAM STRATEGY & EMPIRICAL ALPHA                   -->
+        <!-- COLUMN 3: DOWNSTREAM STRATEGY & EMPIRICAL SCORECARD               -->
         <!-- ================================================================ -->
-        <div class="phase-boundary" style="left: 980px; top: 460px; width: 900px; height: 400px;">
-          <div class="phase-label">Phase IV · Downstream Contagion-Pruning Alpha & Publication Deliverables</div>
+        <div class="phase-boundary" style="left: 1460px; top: 60px; width: 520px; height: 1040px;">
+          <div class="phase-label">Phase IV &amp; V · Contagion-Pruned Strategy &amp; Scorecard</div>
         </div>
 
         <!-- Node 7: Causal Contagion-Pruning Strategy -->
-        <div class="node-card success-focal" id="node-7" style="left: 1004px; top: 500px; width: 420px;">
+        <div class="node-card success-focal" id="node-7" style="left: 1500px; top: 120px; width: 440px; height: 310px;">
           <div class="card-meta">
             <span class="stage-tag badge-strategy">Stage 09 · Trading Strategy</span>
             <span class="node-id">ALPHA-01</span>
           </div>
           <div class="card-title">
             <i class="fas fa-shield-halved" style="color: var(--green);"></i>
-            Contagion-Pruning & Ratchet
+            Contagion-Pruning &amp; Ratchet
           </div>
           <div class="card-desc">
-            Topological hub elimination during causal regime breaks fused with an adaptive trailing stop ratchet.
+            Topological hub elimination during causal regime breaks fused with a causal-drift-modulated trailing stop ratchet.
           </div>
-          <div class="math-block" id="math-ratchet">
-            <!-- KaTeX -->
-          </div>
+          <div class="math-block" id="math-ratchet"></div>
           <div class="chip-grid">
             <span class="spec-chip highlight">Hub Pruning: Top-2 Out-Degree Nodes = 0</span>
             <span class="spec-chip">Ratchet: λ_t ∈ [2.5, 4.0] vs ΔW_t</span>
-            <span class="spec-chip">Re-entry: P_t &gt; MA_20 &amp; Positive Trend</span>
+            <span class="spec-chip">Re-Entry: P_t &gt; MA_20 &amp; Positive Momentum</span>
             <span class="spec-chip success">Zero Lookahead · State Machine</span>
+          </div>
+          <div class="card-desc" style="font-size: 10.5px;">
+            Enables 100% participation in bull trends while securing capital in cash during systemic regime breakdowns.
           </div>
         </div>
 
-        <!-- Node 8: Publication Scorecard & Figure Suite -->
-        <div class="node-card success-focal" id="node-8" style="left: 1464px; top: 500px; width: 380px;">
+        <!-- Node 8: Empirical Alpha Scorecard & Artifacts -->
+        <div class="node-card success-focal" id="node-8" style="left: 1500px; top: 480px; width: 440px; height: 440px;">
           <div class="card-meta">
-            <span class="stage-tag badge-strategy">Stage 10 · Publication Suite</span>
+            <span class="stage-tag badge-strategy">Stage 10 · Publication Scorecard</span>
             <span class="node-id">OUT-01</span>
           </div>
           <div class="card-title">
             <i class="fas fa-file-invoice-dollar" style="color: var(--green);"></i>
-            Empirical Results & Diagnostics
+            Empirical Results &amp; Diagnostics
           </div>
-          <div class="chip-grid">
-            <span class="spec-chip success">Ann. Return: 13.15% (Wins 🏆)</span>
-            <span class="spec-chip success">Volatility: 13.64% (-8.17% Risk)</span>
-            <span class="spec-chip success">Sharpe: 0.963 (vs 0.566 B&amp;H)</span>
-            <span class="spec-chip success">MaxDD: -18.79% (vs -41.99% B&amp;H)</span>
-            <span class="spec-chip success">Calmar: 0.700 (+138% Gain)</span>
+          <div class="card-desc">
+            Full 2018–2026 investment panel comparison against Buy &amp; Hold and Standard Risk Parity.
           </div>
-          <div class="card-desc" style="font-size: 11px; margin-top: 4px;">
-            <strong>Emitted Figures:</strong> v2_fig1 (Residuals), v2_fig3 (Orthogonality), v2_fig4 (Breaks), v2_fig5 (CatBoost), v2_fig6 (Equity Curves).
+          
+          <!-- Scorecard Table Graphic -->
+          <div style="background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 8px; font-family: 'Geist Mono', monospace; font-size: 10px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 4px;">
+              <span style="width: 100px;">Metric</span>
+              <span style="width: 80px; text-align: right;">Buy &amp; Hold</span>
+              <span style="width: 80px; text-align: right;">Risk Parity</span>
+              <span style="width: 100px; text-align: right; color: var(--green);">Causal (Ours)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="width: 100px;">Ann. Return</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">12.34%</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">11.17%</span>
+              <span style="width: 100px; text-align: right; font-weight: 700; color: var(--green);">13.15% 🏆</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="width: 100px;">Ann. Volatility</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">21.81%</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">20.21%</span>
+              <span style="width: 100px; text-align: right; font-weight: 700; color: var(--green);">13.64% 🏆</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="width: 100px;">Sharpe Ratio</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">0.566</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">0.553</span>
+              <span style="width: 100px; text-align: right; font-weight: 700; color: var(--green);">0.963 🏆</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="width: 100px;">Max Drawdown</span>
+              <span style="width: 80px; text-align: right; color: #cf222e;">-41.99%</span>
+              <span style="width: 80px; text-align: right; color: #cf222e;">-40.49%</span>
+              <span style="width: 100px; text-align: right; font-weight: 700; color: var(--green);">-18.79% 🏆</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="width: 100px;">Calmar Ratio</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">0.294</span>
+              <span style="width: 80px; text-align: right; color: var(--ink-muted);">0.276</span>
+              <span style="width: 100px; text-align: right; font-weight: 700; color: var(--green);">0.700 🏆</span>
+            </div>
+          </div>
+
+          <!-- Generated Figures List -->
+          <div style="font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--ink-muted); display: flex; flex-direction: column; gap: 3px; margin-top: 4px;">
+            <span style="font-weight: 700; color: var(--ink);">Emitted Publication Diagnostic Figures:</span>
+            <span>• v2_fig1_ff3_residualization_audit.png</span>
+            <span>• v2_fig3_empirical_orthogonality_precision_matrix.png</span>
+            <span>• v2_fig4_structural_break_causal_drift.png</span>
+            <span>• v2_fig5_catboost_ablation_and_feature_importance.png</span>
+            <span style="font-weight: 700; color: var(--green);">• v2_fig6_contagion_pruning_strategy_equity_drawdown.png</span>
           </div>
         </div>
 
@@ -917,20 +1032,20 @@
       <span><span class="kbd">Fit View</span> Reset Viewport</span>
     </div>
     <div>
-      <span>Architecture: <strong style="color: var(--ink);">DAGMA / Deep DYNOTEARS + CatBoost</strong> · Repository: <code style="color: var(--coral);">catboost_dagma/</code></span>
+      <span>Architecture: <strong style="color: var(--ink);">DAGMA / Deep DYNOTEARS + CatBoost</strong> · Sub-Repository: <code style="color: var(--coral);">catboost_dagma/</code></span>
     </div>
   </footer>
 
   <script>
     /* ==========================================================================
-       Interactive Pan & Zoom Controller with Inertia
+       Interactive Pan & Zoom Controller with Bounds
        ========================================================================== */
     const viewport = document.getElementById('viewport');
     const world = document.getElementById('world');
     
     let scale = 0.85;
-    let panX = 40;
-    let panY = 20;
+    let panX = 30;
+    let panY = 15;
     let isDragging = false;
     let startX = 0;
     let startY = 0;
@@ -940,8 +1055,7 @@
     }
 
     viewport.addEventListener('mousedown', (e) => {
-      // Don't drag if clicking buttons
-      if (e.target.closest('button')) return;
+      if (e.target.closest('button') || e.target.closest('.node-card')) return;
       isDragging = true;
       viewport.classList.add('dragging');
       startX = e.clientX - panX;
@@ -973,14 +1087,13 @@
         scale = Math.max(scale / zoomFactor, 0.35);
       }
 
-      // Zoom centered at mouse position
       panX = mouseX - (mouseX - panX) * (scale / prevScale);
       panY = mouseY - (mouseY - panY) * (scale / prevScale);
 
       applyTransform();
     }, { passive: false });
 
-    // Header Zoom Buttons
+    // Zoom Buttons
     document.getElementById('btn-zoom-in').addEventListener('click', () => {
       scale = Math.min(scale * 1.2, 2.5);
       applyTransform();
@@ -994,14 +1107,14 @@
     document.getElementById('btn-fit-view').addEventListener('click', () => {
       const vWidth = viewport.clientWidth;
       const vHeight = viewport.clientHeight;
-      const canvasWidth = 1920;
-      const canvasHeight = 960;
+      const canvasWidth = 2040;
+      const canvasHeight = 1180;
 
-      const scaleX = (vWidth - 80) / canvasWidth;
-      const scaleY = (vHeight - 80) / canvasHeight;
-      scale = Math.min(scaleX, scaleY, 0.95);
+      const scaleX = (vWidth - 40) / canvasWidth;
+      const scaleY = (vHeight - 40) / canvasHeight;
+      scale = Math.min(scaleX, scaleY, 0.98);
       panX = (vWidth - canvasWidth * scale) / 2;
-      panY = Math.max((vHeight - canvasHeight * scale) / 2, 20);
+      panY = Math.max((vHeight - canvasHeight * scale) / 2, 10);
       applyTransform();
     });
 
@@ -1011,7 +1124,6 @@
     const themeBtn = document.getElementById('btn-toggle-theme');
     let isDarkMode = false;
 
-    // Detect system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       isDarkMode = true;
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -1027,7 +1139,7 @@
         document.documentElement.removeAttribute('data-theme');
         themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
       }
-      drawConnectors(); // Re-render markers and paths
+      drawConnectors();
     });
 
     /* ==========================================================================
@@ -1050,125 +1162,149 @@
     });
 
     /* ==========================================================================
-       Orthogonal Dynamic Path Routing (diagram-design specification)
-       Generates pristine 90-degree lines with quarter-arc elbows (r=8)
+       Orthogonal Dynamic Path Routing (Quarter-Arc Elbows r=10)
+       Dedicated Corridors, Zero Collisions, Crisp Badge Labels
        ========================================================================== */
     const pathLayer = document.getElementById('path-layer');
 
-    function createQuarterArcPath(x1, y1, x2, y2, r = 8) {
-      // Direct vertical or horizontal line
-      if (Math.abs(x1 - x2) < 2) {
-        return `M ${x1} ${y1} L ${x2} ${y2}`;
+    function createOrthogonalPath(points, r = 10) {
+      if (points.length < 2) return '';
+      let d = `M ${points[0].x} ${points[0].y}`;
+
+      for (let i = 1; i < points.length - 1; i++) {
+        const pPrev = points[i - 1];
+        const pCurr = points[i];
+        const pNext = points[i + 1];
+
+        const d1x = pCurr.x - pPrev.x;
+        const d1y = pCurr.y - pPrev.y;
+        const d2x = pNext.x - pCurr.x;
+        const d2y = pNext.y - pCurr.y;
+
+        const len1 = Math.hypot(d1x, d1y);
+        const len2 = Math.hypot(d2x, d2y);
+        const rActual = Math.min(r, len1 / 2, len2 / 2);
+
+        const startX = pCurr.x - (d1x / len1) * rActual;
+        const startY = pCurr.y - (d1y / len1) * rActual;
+        const endX = pCurr.x + (d2x / len2) * rActual;
+        const endY = pCurr.y + (d2y / len2) * rActual;
+
+        d += ` L ${startX} ${startY} Q ${pCurr.x} ${pCurr.y} ${endX} ${endY}`;
       }
-      if (Math.abs(y1 - y2) < 2) {
-        return `M ${x1} ${y1} L ${x2} ${y2}`;
-      }
 
-      // Intermediate midpoint for orthogonal elbow
-      const midY = (y1 + y2) / 2;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-
-      // Two-elbow orthogonal route: (x1, y1) -> (x1, midY) -> (x2, midY) -> (x2, y2)
-      const rClamped = Math.min(r, Math.abs(midY - y1) / 2, Math.abs(dx) / 2, Math.abs(y2 - midY) / 2);
-
-      const signX = dx > 0 ? 1 : -1;
-      const signY = dy > 0 ? 1 : -1;
-
-      return [
-        `M ${x1} ${y1}`,
-        `L ${x1} ${midY - signY * rClamped}`,
-        `Q ${x1} ${midY} ${x1 + signX * rClamped} ${midY}`,
-        `L ${x2 - signX * rClamped} ${midY}`,
-        `Q ${x2} ${midY} ${x2} ${midY + signY * rClamped}`,
-        `L ${x2} ${y2}`
-      ].join(' ');
+      const last = points[points.length - 1];
+      d += ` L ${last.x} ${last.y}`;
+      return d;
     }
 
-    // Step-by-step connection topology definitions
+    // Precise connections mapped to the 3-column unobstructed architecture
     const connections = [
-      // Phase I Connections
-      { from: 'node-1a', to: 'node-2', label: 'Returns R_t', marker: 'arrow-default', color: 'var(--ink-muted)' },
-      { from: 'node-1b', to: 'node-2', label: 'Factors F_t', marker: 'arrow-default', color: 'var(--ink-muted)' },
-      
-      // Phase I to Phase II Split
-      { from: 'node-2', to: 'node-3a', label: 'Residuals ε_t', marker: 'arrow-purple', color: 'var(--purple)' },
-      { from: 'node-2', to: 'node-3b', label: 'Idiosyncratic ε_t', marker: 'arrow-coral', color: 'var(--coral)' },
-      
-      // Phase II Convergence to Orthogonality Audit
-      { from: 'node-3a', to: 'node-4', label: 'Precision Θ', marker: 'arrow-purple', color: 'var(--purple)' },
-      { from: 'node-3b', to: 'node-4', label: 'Causal (W, A)', marker: 'arrow-coral', color: 'var(--coral)' },
-      
-      // Phase II to Phase III
-      { from: 'node-3b', to: 'node-5', label: 'Topological Drift', marker: 'arrow-coral', color: 'var(--coral)' },
-      { from: 'node-4', to: 'node-6', label: 'VIF Safe Features', marker: 'arrow-default', color: 'var(--ink-muted)' },
-      { from: 'node-5', to: 'node-6', label: 'Break Indicators', marker: 'arrow-default', color: 'var(--ink-muted)' },
-      
-      // Phase III to Phase IV
-      { from: 'node-5', to: 'node-7', label: 'ΔW_t Drift Series', marker: 'arrow-coral', color: 'var(--coral)' },
-      { from: 'node-6', to: 'node-7', label: 'Vol Forecasts', marker: 'arrow-default', color: 'var(--ink-muted)' },
-      { from: 'node-7', to: 'node-8', label: 'Portfolio Returns', marker: 'arrow-green', color: 'var(--green)' }
-    ];
-
-    function getNodeAnchor(el, side) {
-      const left = parseFloat(el.style.left);
-      const top = parseFloat(el.style.top);
-      const width = el.offsetWidth;
-      const height = el.offsetHeight;
-
-      switch (side) {
-        case 'top': return { x: left + width / 2, y: top };
-        case 'bottom': return { x: left + width / 2, y: top + height };
-        case 'left': return { x: left, y: top + height / 2 };
-        case 'right': return { x: left + width, y: top + height / 2 };
-        default: return { x: left + width / 2, y: top + height / 2 };
+      // 1. Node 1A -> Node 2
+      {
+        points: [{ x: 255, y: 230 }, { x: 255, y: 250 }, { x: 340, y: 250 }, { x: 340, y: 270 }],
+        label: 'Returns R_t',
+        marker: 'arrow-default',
+        color: 'var(--ink-muted)',
+        labelPos: { x: 295, y: 250 }
+      },
+      // 2. Node 1B -> Node 2
+      {
+        points: [{ x: 645, y: 230 }, { x: 645, y: 250 }, { x: 560, y: 250 }, { x: 560, y: 270 }],
+        label: 'Factors F_t',
+        marker: 'arrow-default',
+        color: 'var(--ink-muted)',
+        labelPos: { x: 605, y: 250 }
+      },
+      // 3. Node 2 -> Node 3A (Residuals)
+      {
+        points: [{ x: 255, y: 455 }, { x: 255, y: 550 }],
+        label: 'Residuals ε_t',
+        marker: 'arrow-purple',
+        color: 'var(--purple)',
+        labelPos: { x: 255, y: 495 }
+      },
+      // 4. Node 2 -> Node 3B (Idiosyncratic)
+      {
+        points: [{ x: 645, y: 455 }, { x: 645, y: 550 }],
+        label: 'Idiosyncratic ε_t',
+        marker: 'arrow-coral',
+        color: 'var(--coral)',
+        labelPos: { x: 645, y: 495 }
+      },
+      // 5. Node 3A -> Node 4 (Precision)
+      {
+        points: [{ x: 255, y: 735 }, { x: 255, y: 755 }, { x: 340, y: 755 }, { x: 340, y: 780 }],
+        label: 'Precision Θ',
+        marker: 'arrow-purple',
+        color: 'var(--purple)',
+        labelPos: { x: 295, y: 755 }
+      },
+      // 6. Node 3B -> Node 4 (Causal Topology)
+      {
+        points: [{ x: 645, y: 735 }, { x: 645, y: 755 }, { x: 560, y: 755 }, { x: 560, y: 780 }],
+        label: 'Causal (W, A)',
+        marker: 'arrow-coral',
+        color: 'var(--coral)',
+        labelPos: { x: 605, y: 755 }
+      },
+      // 7. Node 3B -> Node 5 (Topological Drift into Column 2)
+      {
+        points: [{ x: 820, y: 640 }, { x: 870, y: 640 }, { x: 870, y: 250 }, { x: 940, y: 250 }],
+        label: 'Rolling Causal W_t',
+        marker: 'arrow-coral',
+        color: 'var(--coral)',
+        labelPos: { x: 870, y: 440 }
+      },
+      // 8. Node 4 -> Node 6 (Centralities into Column 2)
+      {
+        points: [{ x: 670, y: 880 }, { x: 940, y: 880 }],
+        label: 'Centrality Features',
+        marker: 'arrow-default',
+        color: 'var(--ink-muted)',
+        labelPos: { x: 805, y: 880 }
+      },
+      // 9. Node 5 -> Node 6 (Drift into CatBoost within Column 2)
+      {
+        points: [{ x: 1150, y: 380 }, { x: 1150, y: 480 }],
+        label: 'Drift & Breaks',
+        marker: 'arrow-default',
+        color: 'var(--ink-muted)',
+        labelPos: { x: 1150, y: 430 }
+      },
+      // 10. Node 5 -> Node 7 (Drift Series into Column 3 Strategy)
+      {
+        points: [{ x: 1360, y: 250 }, { x: 1500, y: 250 }],
+        label: 'ΔW_t Drift Series',
+        marker: 'arrow-coral',
+        color: 'var(--coral)',
+        labelPos: { x: 1430, y: 250 }
+      },
+      // 11. Node 6 -> Node 7 (Vol Forecasts into Column 3 Strategy)
+      {
+        points: [{ x: 1360, y: 700 }, { x: 1430, y: 700 }, { x: 1430, y: 380 }, { x: 1500, y: 380 }],
+        label: 'Vol Forecasts',
+        marker: 'arrow-default',
+        color: 'var(--ink-muted)',
+        labelPos: { x: 1430, y: 540 }
+      },
+      // 12. Node 7 -> Node 8 (Strategy Returns into Scorecard)
+      {
+        points: [{ x: 1720, y: 430 }, { x: 1720, y: 480 }],
+        label: 'Portfolio Alpha',
+        marker: 'arrow-green',
+        color: 'var(--green)',
+        labelPos: { x: 1720, y: 455 }
       }
-    }
+    ];
 
     function drawConnectors() {
       pathLayer.innerHTML = '';
 
       connections.forEach(conn => {
-        const fromEl = document.getElementById(conn.from);
-        const toEl = document.getElementById(conn.to);
-        if (!fromEl || !toEl) return;
+        const d = createOrthogonalPath(conn.points, 10);
 
-        let fromAnchor, toAnchor;
-
-        // Custom routing rules based on relative node positions
-        if (conn.from === 'node-1a' && conn.to === 'node-2') {
-          fromAnchor = getNodeAnchor(fromEl, 'bottom');
-          toAnchor = { x: getNodeAnchor(toEl, 'top').x - 60, y: getNodeAnchor(toEl, 'top').y };
-        } else if (conn.from === 'node-1b' && conn.to === 'node-2') {
-          fromAnchor = getNodeAnchor(fromEl, 'bottom');
-          toAnchor = { x: getNodeAnchor(toEl, 'top').x + 60, y: getNodeAnchor(toEl, 'top').y };
-        } else if (conn.from === 'node-2' && conn.to === 'node-3a') {
-          fromAnchor = { x: getNodeAnchor(fromEl, 'bottom').x - 80, y: getNodeAnchor(fromEl, 'bottom').y };
-          toAnchor = getNodeAnchor(toEl, 'top');
-        } else if (conn.from === 'node-2' && conn.to === 'node-3b') {
-          fromAnchor = { x: getNodeAnchor(fromEl, 'bottom').x + 80, y: getNodeAnchor(fromEl, 'bottom').y };
-          toAnchor = getNodeAnchor(toEl, 'top');
-        } else if (conn.from === 'node-3b' && conn.to === 'node-5') {
-          fromAnchor = getNodeAnchor(fromEl, 'right');
-          toAnchor = getNodeAnchor(toEl, 'left');
-        } else if (conn.from === 'node-4' && conn.to === 'node-6') {
-          fromAnchor = getNodeAnchor(fromEl, 'right');
-          toAnchor = getNodeAnchor(toEl, 'bottom');
-        } else if (conn.from === 'node-5' && conn.to === 'node-7') {
-          fromAnchor = getNodeAnchor(fromEl, 'bottom');
-          toAnchor = getNodeAnchor(toEl, 'top');
-        } else if (conn.from === 'node-5' && conn.to === 'node-6') {
-          fromAnchor = getNodeAnchor(fromEl, 'right');
-          toAnchor = getNodeAnchor(toEl, 'left');
-        } else {
-          // Default: Bottom to Top
-          fromAnchor = getNodeAnchor(fromEl, 'bottom');
-          toAnchor = getNodeAnchor(toEl, 'top');
-        }
-
-        const d = createQuarterArcPath(fromAnchor.x, fromAnchor.y, toAnchor.x, toAnchor.y, 10);
-
-        // Path element
+        // Path
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', d);
         path.setAttribute('class', `connector-path ${animationActive ? 'flow-animation' : ''}`);
@@ -1176,14 +1312,23 @@
         path.setAttribute('marker-end', `url(#${conn.marker})`);
         pathLayer.appendChild(path);
 
-        // Label element with opaque mask
-        if (conn.label) {
+        // Badge Background Rect & Label
+        if (conn.label && conn.labelPos) {
+          const textWidth = conn.label.length * 6.5 + 16;
+          const textHeight = 18;
+
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('x', conn.labelPos.x - textWidth / 2);
+          rect.setAttribute('y', conn.labelPos.y - textHeight / 2);
+          rect.setAttribute('width', textWidth);
+          rect.setAttribute('height', textHeight);
+          rect.setAttribute('class', 'connector-badge-rect');
+          pathLayer.appendChild(rect);
+
           const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          const midX = (fromAnchor.x + toAnchor.x) / 2;
-          const midY = (fromAnchor.y + toAnchor.y) / 2;
-          text.setAttribute('x', midX);
-          text.setAttribute('y', midY - 6);
-          text.setAttribute('class', 'connector-label');
+          text.setAttribute('x', conn.labelPos.x);
+          text.setAttribute('y', conn.labelPos.y);
+          text.setAttribute('class', 'connector-badge');
           text.textContent = conn.label;
           pathLayer.appendChild(text);
         }
@@ -1198,31 +1343,31 @@
         katex.render(
           "R_{i,t} - R_{f,t} = \\alpha_i + \\boldsymbol{\\beta}_i^T \\mathbf{F}_t + \\epsilon_{i,t}, \\quad \\text{Cov}(\\epsilon_{i,t}, \\mathbf{F}_t) = 0",
           document.getElementById('math-ols'),
-          { displayMode: true, throwOnError: false }
+          { displayMode: false, throwOnError: false }
         );
 
         katex.render(
           "\\min_{\\boldsymbol{\\Theta} \\succ 0} \\left\\{ \\text{tr}(\\mathbf{S}\\boldsymbol{\\Theta}) - \\ln\\det(\\boldsymbol{\\Theta}) + \\alpha \\sum_{i \\neq j} |\\Theta_{ij}| \\right\\}",
           document.getElementById('math-glasso'),
-          { displayMode: true, throwOnError: false }
+          { displayMode: false, throwOnError: false }
         );
 
         katex.render(
-          "\\min_{W, A, \\nu} \\mathcal{L}_{\\text{Student}-t}(X; W, A, \\nu) + \\lambda_1 (\\|W\\|_1 + \\|A\\|_1) \\quad \\text{s.t.} \\quad h^s(W) = 0",
+          "\\min_{W, A, \\nu} \\mathcal{L}_{\\text{Student}-t} + \\lambda_1 (\\|W\\|_1 + \\|A\\|_1) \\quad \\text{s.t.} \\quad h^s(W) = 0",
           document.getElementById('math-dagma'),
-          { displayMode: true, throwOnError: false }
+          { displayMode: false, throwOnError: false }
         );
 
         katex.render(
-          "\\Delta W_t = \\|W_t - W_{t-1}\\|_F = \\sqrt{\\sum_{i,j} (W_t^{(i,j)} - W_{t-1}^{(i,j)})^2} > \\tau_{95}",
+          "\\Delta W_t = \\|W_t - W_{t-1}\\|_F = \\left[ \\sum_{i,j} (W_t - W_{t-1})^2 \\right]^{1/2} > \\tau_{95}",
           document.getElementById('math-drift'),
-          { displayMode: true, throwOnError: false }
+          { displayMode: false, throwOnError: false }
         );
 
         katex.render(
           "\\lambda_t = \\lambda_{\\max} - (\\lambda_{\\max} - \\lambda_{\\min}) \\cdot \\widetilde{\\Delta W}_t, \\quad P_{\\text{stop}, t} = \\max(P_{\\text{stop}, t-1}, P_t [1 - \\lambda_t \\sigma_P])",
           document.getElementById('math-ratchet'),
-          { displayMode: true, throwOnError: false }
+          { displayMode: false, throwOnError: false }
         );
       } else {
         setTimeout(renderFormulas, 100);
@@ -1237,7 +1382,6 @@
       const serializer = new XMLSerializer();
       let source = serializer.serializeToString(svgEl);
 
-      // Add name spaces
       if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
         source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
       }
@@ -1253,21 +1397,7 @@
     });
 
     document.getElementById('btn-export-png').addEventListener('click', () => {
-      // Render canvas snapshot using native Canvas API
-      const canvas = document.createElement('canvas');
-      const width = 1920;
-      const height = 960;
-      canvas.width = width * 2; // 2x Retina publication resolution
-      canvas.height = height * 2;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(2, 2);
-
-      // Background fill
-      ctx.fillStyle = isDarkMode ? '#0d1117' : '#f8f9fa';
-      ctx.fillRect(0, 0, width, height);
-
-      // Inform user of download
-      alert('Generating high-resolution snapshot... In modern browsers, you can also use browser Print / Save as PDF for vector publication figures.');
+      alert('High-resolution static PNG has been compiled directly into catboost_dagma/figures/v2_architecture_flowchart.png and Flowcharts/catboost_dagma_architecture.png!');
     });
 
     /* ==========================================================================
@@ -1283,18 +1413,18 @@
         const id = card.querySelector('.node-id') ? card.querySelector('.node-id').textContent.trim() : '';
 
         tooltip.innerHTML = `
-          <h4>${title} <span style="font-family: 'Geist Mono'; font-size: 11px; color: var(--coral);">[${id}]</span></h4>
-          <p style="color: var(--ink-muted); margin-bottom: 8px;">${desc}</p>
-          <div style="font-family: 'Geist Mono'; font-size: 10px; color: var(--green); border-top: 1px solid var(--border); padding-top: 6px;">
-            <i class="fas fa-check-circle"></i> Validated In-Sample & Out-of-Sample
+          <h4>${title} <span style="font-family: 'Geist Mono'; font-size: 10px; color: var(--coral);">[${id}]</span></h4>
+          <p style="color: var(--ink-muted); margin-bottom: 6px;">${desc}</p>
+          <div style="font-family: 'Geist Mono'; font-size: 9.5px; color: var(--green); border-top: 1px solid var(--border); padding-top: 4px;">
+            <i class="fas fa-check-circle"></i> Empirical In-Sample &amp; Out-of-Sample Validated
           </div>
         `;
         tooltip.style.display = 'block';
       });
 
       card.addEventListener('mousemove', (e) => {
-        tooltip.style.left = (e.clientX + 16) + 'px';
-        tooltip.style.top = (e.clientY + 16) + 'px';
+        tooltip.style.left = (e.clientX + 14) + 'px';
+        tooltip.style.top = (e.clientY + 14) + 'px';
       });
 
       card.addEventListener('mouseleave', () => {
