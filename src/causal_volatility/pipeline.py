@@ -83,12 +83,37 @@ class CausalVolatilityPipeline:
         sigma = vol_model.get_conditional_volatility()
         diagnostics = vol_model.get_diagnostics()
 
+
         # Step 5: Causal Discovery DAG (TRAIN / TEST 50/50 Split)
         causal_df = pd.DataFrame(index=z.index)
+        
+        # Fama-French Residualization of Returns (Instructor Feedback)
+        if "Mkt-RF" in stat_df.columns:
+            import statsmodels.api as sm
+            # Align indices and dropna for regression
+            reg_df = stat_df[["SP100_Returns", "Mkt-RF", "SMB", "HML", "RF"]].loc[z.index].dropna()
+            
+            # Predict excess return using Fama-French 3-factor model
+            y = reg_df["SP100_Returns"] - reg_df["RF"]
+            X = reg_df[["Mkt-RF", "SMB", "HML"]]
+            X = sm.add_constant(X)
+            
+            # Fit OLS and extract residuals (shared beta eliminated)
+            model = sm.OLS(y, X).fit()
+            resid = model.resid
+            
+            # Reindex to causal_df and name as Resid_Returns
+            causal_df["Resid_Returns"] = resid.reindex(z.index)
+            print("INFO: Fama-French residualization applied to Returns successfully.")
+        else:
+            causal_df["SP100_Returns"] = stat_df.loc[z.index, "SP100_Returns"]
+            print("WARNING: Fama-French data missing, using raw Returns in causal graph.")
+
         causal_df["Vol_Innovations"] = z
         causal_df["VIX_Diff"] = stat_df.loc[z.index, "VIX_Diff"]
         causal_df["Credit_Spread_Diff"] = stat_df.loc[z.index, "Credit_Spread_Diff"]
         causal_df["Liquidity_Diff"] = stat_df.loc[z.index, "Liquidity_Diff"]
+
 
         midpoint = len(causal_df) // 2
         train_df = causal_df.iloc[:midpoint].copy()

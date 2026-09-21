@@ -80,6 +80,7 @@ class DataProcessor:
         # 5. Remove any remaining NA rows from edge computations
         cleaned_df = cleaned_df.dropna()
 
+
         if keep_raw:
             return cleaned_df
 
@@ -90,7 +91,15 @@ class DataProcessor:
             "Credit_Spread",
             "Liquidity_Proxy",
         ]
+        
+        for ff_col in ["Mkt-RF", "SMB", "HML", "RF"]:
+            if ff_col in cleaned_df.columns:
+                target_columns.append(ff_col)
+                # Forward-fill and back-fill FF3 factors just in case of missing days
+                cleaned_df[ff_col] = cleaned_df[ff_col].ffill().bfill()
+                
         return cleaned_df[target_columns]
+
 
     process_and_align = process
 

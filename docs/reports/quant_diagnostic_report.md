@@ -135,7 +135,7 @@ $$\Delta \ln (\sigma_t^{GK} + \epsilon) = \ln (\sigma_t^{GK} + 10^{-8}) - \ln (\
 | **`Credit_Spread_Diff`** | $< 1.0 \times 10^{-30}$ | STATIONARY | $0.100$ | STATIONARY | **STATIONARY** |
 | **`Liquidity_Diff`** | $9.84 \times 10^{-30}$ | STATIONARY | $0.100$ | STATIONARY | **STATIONARY** |
 
-*All 5 variables reject the unit-root null ($p_{ADF} < 0.01$) and fail to reject the stationary null ($p_{KPSS} > 0.05$), guaranteeing clean mathematical foundations.*
+*All 5 variables reject the unit-root null ($p_{ADF} < 0.01$) and fail to reject the stationary null ($p_{KPSS} > 0.05$), providing empirical support for stationarity.*
 
 ---
 
@@ -159,7 +159,7 @@ The optimal AR lag order was selected using the **Bayesian Information Criterion
 ### 3.2 Innovation Whitening Verification
 * **Residual Ljung-Box Q-Test ($p$-value):** **$0.5296$** (null of zero autocorrelation cannot be rejected; white noise confirmed).
 * **Residual Engle ARCH LM-Test ($p$-value):** **$0.4989$** (null of no ARCH effects cannot be rejected; conditional variance stripped).
-* **Outcome:** The standardized residuals $z_t = \epsilon_t / \sigma_t$ represent orthogonal volatility innovations, ideal for causal DAG extraction.
+* **Outcome:** The standardized residuals $z_t = \epsilon_t / \sigma_t$ represent empirical volatility innovations, ideal for causal DAG extraction.
 
 ---
 
@@ -172,7 +172,7 @@ $$Y_t = c + \beta X_{t-\tau} + \sum_{k=1}^{\tau_{max}} \gamma_k Y_{t-k} + u_t$$
 
 When evaluating whether the target variable caused itself ($X = Y$), Column 1 of the design matrix ($Y_{t-\tau}$) was identical to Column $\tau + 1$ from the conditioning loop ($\sum \gamma_k Y_{t-k}$). This generated exact linear dependence, causing `statsmodels` to throw severe `SingularMatrixWarning` and `Rank-deficient design matrix` errors.
 
-**Mathematical Resolution:**
+**Empirical Resolution:**
 * Self-autoregressive memory is already absorbed by the preceding AR(20)-GARCH(1,1) residualization filter.
 * We enforce `include_self_lags=False` during cross-variable testing. When self-lags are evaluated, lag $\tau$ is strictly omitted from the conditioning set:
 

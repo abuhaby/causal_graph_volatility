@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 import requests
 import yfinance as yf
+import pandas_datareader.data as web
+import datetime
 
 from causal_volatility.config import DataConfig
 from causal_volatility.data.storage import DataStorage
@@ -178,7 +180,7 @@ class SystematicRiskDataFetcher:
         return df
 
     def _fetch_live(self, start_date: str, end_date: str) -> pd.DataFrame:
-        """Execute live data extraction from Yahoo Finance and FRED."""
+        """Execute live data extraction from Yahoo Finance, FRED, and Fama-French."""
         equity_sym = self.config.equity_ticker
         vix_sym = self.config.vix_ticker
         tickers = [equity_sym, vix_sym]
@@ -207,6 +209,22 @@ class SystematicRiskDataFetcher:
         df_fred = pd.DataFrame({"Credit_Spread": credit_spread_series})
 
         raw_df = df_market.join(df_fred, how="left")
+        
+        # Fetch Fama-French 3 Factors
+        try:
+            start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            end_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+            ff3 = web.DataReader('F-F_Research_Data_Factors_daily', 'famafrench', start_dt, end_dt)[0]
+            # FF3 data is in percentages, divide by 100
+            ff3 = ff3 / 100.0
+            raw_df = raw_df.join(ff3, how="left")
+        except Exception as e:
+            import warnings
+            warnings.warn(f"Failed to fetch Fama-French factors: {e}")
+            raw_df["Mkt-RF"] = 0.0
+            raw_df["SMB"] = 0.0
+            raw_df["HML"] = 0.0
+            raw_df["RF"] = 0.0
 
         # Standardize column order matching interface contract
         standard_cols = [
@@ -217,8 +235,15 @@ class SystematicRiskDataFetcher:
             "SP100_Volume",
             "VIX_Close",
             "Credit_Spread",
+            "Mkt-RF",
+            "SMB",
+            "HML",
+            "RF"
         ]
-        return raw_df[standard_cols]
+        # Only return columns that exist (in case of offline mode missing FF3)
+        cols_to_return = [c for c in standard_cols if c in raw_df.columns]
+        return raw_df[cols_to_return]
+
 
     fetch_systematic_risk_data = fetch
 

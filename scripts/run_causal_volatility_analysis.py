@@ -39,20 +39,17 @@ print("🚀 CAUSAL GRAPH VOLATILITY FRAMEWORK: FULL PIPELINE & DIAGNOSTICS")
 print("=" * 85)
 
 # ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 # 1. DATA INGESTION (OFFLINE FIXTURE / YAHOO FINANCE & FRED)
 # ------------------------------------------------------------------------------
 print("\n[Stage 1] Ingesting Systematic Risk Data (2016-01-01 to 2026-01-01)...")
-fixture_path = PROJECT_DIR / "tests" / "fixtures" / "market_data_2016_2026.csv"
-
-if fixture_path.exists():
-    print(f"   👉 Loading offline high-fidelity market fixture: {fixture_path.name}")
-    raw_df = pd.read_csv(fixture_path, parse_dates=["Date"], index_col="Date")
-else:
-    print("   👉 Fetching live market data from Yahoo Finance and FRED...")
-    fetcher = cv.SystematicRiskDataFetcher(offline=False)
-    raw_df = fetcher.fetch_systematic_risk_data("2016-01-01", "2026-01-01")
+print("   👉 Fetching live market data including Fama-French...")
+fetcher = cv.SystematicRiskDataFetcher(offline=False)
+raw_df = fetcher.fetch_systematic_risk_data("2016-01-01", "2026-01-01")
 
 print(f"   ✅ Raw Data Matrix Shape: {raw_df.shape}")
+
 
 # ------------------------------------------------------------------------------
 # 2. DATA PROCESSING & MULTI-ESTIMATOR REALIZED VOLATILITY
@@ -106,6 +103,22 @@ print(f"      - White Noise Status: {'PASS (Uncorrelated Innovations)' if garch_
 # ------------------------------------------------------------------------------
 print("\n[Stage 5] Structural Causal Graph Discovery (Granger DAG with R2 Rank Fix)...")
 causal_df = pd.DataFrame(index=z_shocks.index)
+
+# Fama-French Residualization of Returns (Instructor Feedback)
+if "Mkt-RF" in stat_df.columns:
+    import statsmodels.api as sm
+    reg_df = stat_df[["SP100_Returns", "Mkt-RF", "SMB", "HML", "RF"]].loc[z_shocks.index].dropna()
+    y = reg_df["SP100_Returns"] - reg_df["RF"]
+    X = reg_df[["Mkt-RF", "SMB", "HML"]]
+    X = sm.add_constant(X)
+    model = sm.OLS(y, X).fit()
+    resid = model.resid
+    causal_df["Resid_Returns"] = resid.reindex(z_shocks.index)
+    print("   ✅ Fama-French residualization applied to Returns successfully (Shared beta eliminated).")
+else:
+    causal_df["SP100_Returns"] = stat_df.loc[z_shocks.index, "SP100_Returns"]
+    print("   ⚠️ Fama-French data missing, using raw Returns in causal graph.")
+
 causal_df["Vol_Innovations"] = z_shocks
 causal_df["VIX_Diff"] = stat_df.loc[z_shocks.index, "VIX_Diff"]
 causal_df["Credit_Spread_Diff"] = stat_df.loc[z_shocks.index, "Credit_Spread_Diff"]

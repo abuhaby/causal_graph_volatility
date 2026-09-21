@@ -104,6 +104,7 @@ class StationarityTransformer:
         # 5. Absolute first difference of Liquidity Proxy
         liq_diff = df["Liquidity_Proxy"].diff()
 
+
         stationary_df = pd.DataFrame(
             {
                 "SP100_Returns": sp100_rets,
@@ -113,7 +114,14 @@ class StationarityTransformer:
                 "Liquidity_Diff": liq_diff,
             },
             index=df.index,
-        ).dropna()
+        )
+        
+        for ff_col in ["Mkt-RF", "SMB", "HML", "RF"]:
+            if ff_col in df.columns:
+                stationary_df[ff_col] = df[ff_col]
+                
+        return stationary_df.dropna()
+
 
         return stationary_df
 

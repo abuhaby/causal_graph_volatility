@@ -22,28 +22,46 @@ def set_publication_style():
     plt.rcParams["axes.linewidth"] = 0.8
 
 
+
 def plot_correlation_matrix(
     df: pd.DataFrame,
     out_path: Union[str, Path],
-    title: str = "Systematic Risk Feature Correlation Matrix Heatmap",
+    title: str = "Precision Matrix (Inverse Covariance) Heatmap",
 ):
     """
-    Generate annotated correlation matrix heatmap across stationary features.
-    Matches eda_1_correlation_matrix.png style.
+    Generate annotated partial correlation / precision matrix heatmap across stationary features.
+    Matches instructor feedback to benchmark against precision matrix, not plain correlation.
     """
     set_publication_style()
     fig, ax = plt.subplots(figsize=(11, 8.5))
-    corr = df.corr()
+    
+    # Calculate Covariance and Precision Matrix
+    cov = df.cov()
+    try:
+        inv_cov = np.linalg.inv(cov.values)
+        precision_df = pd.DataFrame(inv_cov, index=cov.index, columns=cov.columns)
+        
+        # Convert Precision Matrix to Partial Correlation Matrix
+        D = np.diag(1.0 / np.sqrt(np.diag(inv_cov)))
+        partial_corr = -1.0 * D.dot(inv_cov).dot(D)
+        np.fill_diagonal(partial_corr, 1.0)
+        
+        plot_df = pd.DataFrame(partial_corr, index=cov.index, columns=cov.columns)
+        cbar_label = "Partial Correlation Coefficient"
+    except np.linalg.LinAlgError:
+        print("WARNING: Covariance matrix singular, falling back to correlation.")
+        plot_df = df.corr()
+        cbar_label = "Pearson Correlation Coefficient"
 
-    mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
-    # Using coolwarm palette with annotations
+    mask = np.triu(np.ones_like(plot_df, dtype=bool), k=1)
+    
     sns.heatmap(
-        corr,
+        plot_df,
         annot=True,
         cmap="coolwarm",
         fmt=".2f",
         linewidths=0.75,
-        cbar_kws={"shrink": 0.8, "label": "Pearson Correlation Coefficient"},
+        cbar_kws={"shrink": 0.8, "label": cbar_label},
         vmin=-1.0,
         vmax=1.0,
         ax=ax,
@@ -55,6 +73,7 @@ def plot_correlation_matrix(
     fig.tight_layout()
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+
 
 
 def plot_return_and_vol_distributions(
