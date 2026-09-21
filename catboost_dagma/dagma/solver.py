@@ -18,6 +18,7 @@ from catboost_dagma.dagma.model import (
     DeepDynotearsMLP,
     compute_student_t_loss,
     compute_gaussian_loss,
+    tensor_to_numpy,
 )
 from catboost_dagma.config import DAGMA_CONFIG
 
@@ -189,8 +190,8 @@ def _fit_single_window_worker(args: Tuple[int, np.ndarray, Dict[str, Any]]) -> D
 
     # Run DAGMA optimization
     model = train_dagma_dynotears(X_curr, X_lags, **kwargs_worker)
-    W = model.get_W_adj().detach().cpu().numpy()
-    A = model.get_A_adj().detach().cpu().numpy()
+    W = tensor_to_numpy(model.get_W_adj())
+    A = tensor_to_numpy(model.get_A_adj())
     nu = model.get_degrees_of_freedom()
 
     # Extract topological features with adaptive threshold

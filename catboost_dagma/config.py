@@ -124,5 +124,8 @@ STRATEGY_CONFIG = {
     "transaction_cost": 0.0005,  # 5 bps per trade
     "rebalance_cadence": 5,      # Days between regular rebalance
     "contagion_hub_prune_k": 2,  # Number of top out-degree nodes to prune during stress
-    "risk_parity_lookback": 60   # Volatility estimation lookback
+    "risk_parity_lookback": 60,  # Volatility estimation lookback
+    "lambda_min": 2.5,           # Tightest multiplier for trailing stop during peak stress
+    "lambda_max": 4.0,           # Loosest multiplier for trailing stop during calm regime
+    "ma_window": 20              # Moving average confirmation window for cash re-entry
 }

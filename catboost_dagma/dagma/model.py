@@ -5,8 +5,17 @@ Implements non-linear contemporaneous and lagged causal discovery with heavy-tai
 
 import math
 from typing import Optional, Tuple
+import numpy as np
 import torch
 import torch.nn as nn
+
+
+def tensor_to_numpy(tensor: torch.Tensor) -> np.ndarray:
+    """Safely converts a PyTorch tensor to a NumPy array across environments."""
+    try:
+        return tensor.detach().cpu().numpy()
+    except RuntimeError:
+        return np.array(tensor.detach().cpu().tolist())
 
 
 class DeepDynotearsMLP(nn.Module):

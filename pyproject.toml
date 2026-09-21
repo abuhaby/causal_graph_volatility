@@ -51,3 +51,8 @@ causal-volatility = "causal_volatility.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["causal_volatility*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "catboost_dagma/tests"]
+python_files = ["test_*.py"]
+

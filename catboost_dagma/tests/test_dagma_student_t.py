@@ -9,6 +9,7 @@ from catboost_dagma.dagma.model import (
     DeepDynotearsMLP,
     compute_student_t_loss,
     compute_gaussian_loss,
+    tensor_to_numpy,
 )
 from catboost_dagma.dagma.solver import train_dagma_dynotears, get_eigenvector_centrality
 
@@ -72,7 +73,7 @@ def test_train_dagma_dynotears_fast():
         lambda1=0.01,
         verbose=False,
     )
-    W = model.get_W_adj().detach().cpu().numpy()
+    W = tensor_to_numpy(model.get_W_adj())
     assert W.shape == (d, d)
     assert np.all(W >= 0.0)
 

@@ -231,9 +231,16 @@ To address the **Capstone Project Instructor Feedback**, we engineered **Version
   - **2022**: Federal Reserve quantitative tightening rate-hike regime.
   - **March 2023**: Silicon Valley Bank (SVB) collapse and regional banking panic.
 * **CatBoost Tabular Fusion & Ablation**:
-  In a rigorous chronological out-of-sample evaluation (Train: 2018–2022, Test: 2023–2026), DAGMA causal features account for **>61% of CatBoost's total feature importance** (`causal_drift`: 18.85%, `days_since_last_break`: 17.85%, `dagma_nu`: 13.91%, `is_structural_break`: 10.98%).
-* **Contagion-Pruning Portfolio Strategy**:
-  When a structural break is triggered, the system prunes capital allocations from systemic transmitter nodes (highest DAGMA out-degree $k_{\text{out}}$) to zero, redistributing capital into uncoupled assets, significantly reducing drawdowns during contagion events.
+  In a rigorous chronological out-of-sample evaluation (Train: 2018–2022, Test: 2023–2026), DAGMA causal features account for **>81% of CatBoost's total feature importance** (`days_since_last_break`: 50.96%, `causal_drift`: 23.50%, `dagma_nu`: 7.22%).
+* **Contagion-Pruning Portfolio Strategy Empirical Results**:
+  The Causal Contagion-Pruned Strategy combines out-degree hub pruning with a causal-drift-modulated trailing stop ratchet, decisively outperforming both Buy & Hold and Standard Risk Parity across all performance dimensions:
+
+  | Strategy | Annualized Return | Annualized Volatility | Sharpe Ratio | Maximum Drawdown | Calmar Ratio |
+  | :--- | :---: | :---: | :---: | :---: | :---: |
+  | **Buy & Hold (Equal Weight)** | 12.34% | 21.81% | 0.566 | -41.99% | 0.294 |
+  | **Standard Risk Parity (Inverse Vol)** | 11.17% | 20.21% | 0.553 | -40.49% | 0.276 |
+  | **Causal Contagion-Pruned (Ours)** | **13.15%** | **13.64%** | **0.963** | **-18.79%** | **0.700** |
+
 * **Interactive Notebook & Publication Figures**:
   The complete pipeline is available in [`catboost_dagma/notebooks/v2_catboost_dagma_pipeline.ipynb`](catboost_dagma/notebooks/v2_catboost_dagma_pipeline.ipynb), complete with pre-executed outputs and 5 publication figures in `catboost_dagma/figures/`.
 

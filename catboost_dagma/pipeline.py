@@ -215,6 +215,7 @@ class CatBoostDagmaPipeline:
             returns_df=returns_df,
             rolling_dagma_results=dagma_results,
             structural_breaks_df=breaks_df,
+            drift_series=drift_series,
         )
         if verbose:
             stats = strategy_res["stats_summary"]
