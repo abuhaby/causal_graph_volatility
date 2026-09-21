@@ -215,9 +215,22 @@ class SystematicRiskDataFetcher:
             start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
             end_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
             ff3 = web.DataReader('F-F_Research_Data_Factors_daily', 'famafrench', start_dt, end_dt)[0]
+            # Convert PeriodIndex to DatetimeIndex
+            if hasattr(ff3.index, "to_timestamp"):
+                ff3.index = ff3.index.to_timestamp()
+            elif not isinstance(ff3.index, pd.DatetimeIndex):
+                ff3.index = pd.to_datetime(ff3.index.astype(str))
+            
+            # Align timezone if raw_df index is tz-aware or naive
+            if raw_df.index.tz is not None:
+                raw_df.index = raw_df.index.tz_localize(None)
+            if ff3.index.tz is not None:
+                ff3.index = ff3.index.tz_localize(None)
+
             # FF3 data is in percentages, divide by 100
             ff3 = ff3 / 100.0
             raw_df = raw_df.join(ff3, how="left")
+            raw_df[["Mkt-RF", "SMB", "HML", "RF"]] = raw_df[["Mkt-RF", "SMB", "HML", "RF"]].ffill().bfill()
         except Exception as e:
             import warnings
             warnings.warn(f"Failed to fetch Fama-French factors: {e}")

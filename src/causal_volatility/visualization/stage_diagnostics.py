@@ -509,7 +509,7 @@ def plot_out_of_sample_drawdown(
         f"Advantage: Causal drawdown is {abs(bh_min_dd - causal_min_dd):.1f}% shallower than B&H!"
     )
     ax.text(
-        0.02, 0.30, info_box,
+        0.02, 0.46, info_box,
         transform=ax.transAxes,
         fontsize=8.5,
         fontfamily="monospace",

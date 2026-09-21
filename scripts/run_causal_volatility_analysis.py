@@ -44,9 +44,18 @@ print("=" * 85)
 # 1. DATA INGESTION (OFFLINE FIXTURE / YAHOO FINANCE & FRED)
 # ------------------------------------------------------------------------------
 print("\n[Stage 1] Ingesting Systematic Risk Data (2016-01-01 to 2026-01-01)...")
-print("   👉 Fetching live market data including Fama-French...")
-fetcher = cv.SystematicRiskDataFetcher(offline=False)
-raw_df = fetcher.fetch_systematic_risk_data("2016-01-01", "2026-01-01")
+import argparse
+_parser = argparse.ArgumentParser(description="Run causal volatility analysis")
+_parser.add_argument("--offline", action="store_true", default=False, help="Use offline data fixture")
+_args, _ = _parser.parse_known_args()
+
+try:
+    fetcher = cv.SystematicRiskDataFetcher(offline=_args.offline)
+    raw_df = fetcher.fetch_systematic_risk_data("2016-01-01", "2026-01-01")
+except Exception as e:
+    print(f"   ⚠️ Data fetch encounter ({e}). Falling back to offline fixture...")
+    fetcher = cv.SystematicRiskDataFetcher(offline=True)
+    raw_df = fetcher.fetch_systematic_risk_data("2016-01-01", "2026-01-01")
 
 print(f"   ✅ Raw Data Matrix Shape: {raw_df.shape}")
 
